@@ -1,14 +1,12 @@
-from day1_input import input
-from itertools import cycle
+from profile import profile_by_day
 
-# Day 1
-OFFSET1 = 1
-
-# DAY 2
-OFFSET2 = len(input) / 2
+# # Part 1
+# OFFSET1 = 1
+#
+# # Part 2
+# OFFSET2 = len(input) / 2
 
 #input = '1122'
-
 def solve(input, offset):
     sum = 0
     for i, c in enumerate(input):
@@ -17,8 +15,18 @@ def solve(input, offset):
             sum += int(c)
     return sum
 
+@profile_by_day(day=1)
+def part1(input):
+    return solve(input, 1)
+
+@profile_by_day(day=1)
+def part2(input):
+    return solve(input, len(input) / 2)
 
 if __name__ == '__main__':
-    print(solve(input, OFFSET1))
-    print(solve(input, OFFSET2))
+    from pathlib import Path
+    import os
+
+    part1()
+    part2()
     
