@@ -1,4 +1,3 @@
-#input = '1122'
 def solve(input, offset):
     sum = 0
     for i, c in enumerate(input):
@@ -19,7 +18,6 @@ if __name__ == '__main__':
 
     with open(Path(os.getcwd()) / 'day1.txt', 'r') as file:
         input = file.read()
-    part1(input)
-    part2(input)
+    print(part1(input))
+    print(part2(input))
 
-    
