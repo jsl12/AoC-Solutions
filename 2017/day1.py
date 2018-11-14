@@ -1,11 +1,3 @@
-from profile import profile_by_day
-
-# # Part 1
-# OFFSET1 = 1
-#
-# # Part 2
-# OFFSET2 = len(input) / 2
-
 #input = '1122'
 def solve(input, offset):
     sum = 0
