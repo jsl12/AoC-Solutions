@@ -20,4 +20,3 @@ if __name__ == '__main__':
         input = file.read()
     print(part1(input))
     print(part2(input))
-
