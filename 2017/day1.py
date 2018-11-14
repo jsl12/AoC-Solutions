@@ -15,11 +15,9 @@ def solve(input, offset):
             sum += int(c)
     return sum
 
-@profile_by_day(day=1)
 def part1(input):
     return solve(input, 1)
 
-@profile_by_day(day=1)
 def part2(input):
     return solve(input, len(input) / 2)
 
@@ -27,6 +25,9 @@ if __name__ == '__main__':
     from pathlib import Path
     import os
 
-    part1()
-    part2()
+    with open(Path(os.getcwd()) / 'day1.txt', 'r') as file:
+        input = file.read()
+    part1(input)
+    part2(input)
+
     
