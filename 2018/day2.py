@@ -19,7 +19,29 @@ def part1(input):
     return checksum
 
 def part2(input):
-    return
+    input = input.splitlines()
+
+    for word1 in input:
+        for word2 in input:
+            if compare(word1, word2):
+                return solution(word1, word2)
+
+def compare(a, b):
+    res = 0
+    for i, c in enumerate(a):
+        if c != b[i]:
+           res += 1
+        if res > 1:
+            return False
+    if res == 1:
+        return True
+
+def solution(a, b):
+    res = ''
+    for i, c in enumerate(a):
+        if c == b[i]:
+            res += c
+    return res
 
 if __name__ == '__main__':
     from pathlib import Path
