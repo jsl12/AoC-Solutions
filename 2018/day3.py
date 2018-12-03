@@ -94,36 +94,6 @@ class Claim:
         ver = self.y_check(y)
         return hor and ver
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.increment_pointer():
-            return self.iter_pos
-        else:
-            raise StopIteration
-
-    def increment_pointer(self):
-        # Move to the right once
-        self.iter_pos[0] += 1
-
-        # Determine if out of bounds
-        if not self.check():
-            # Determine if at end of row
-            if self.y_check() and not self.x_check():
-                # Reset column
-                self.iter_pos[0] = self.coords[0]
-                # Increment row
-                self.iter_pos[1] += 1
-
-            # Check to make sure still in bounds, only necessary to check y
-            if not self.y_check():
-                return False
-            else:
-                return True
-        else:
-            return True
-
 
 def part1(input):
     hits = 0
