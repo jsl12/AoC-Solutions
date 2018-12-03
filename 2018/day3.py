@@ -1,7 +1,11 @@
 import re
+import itertools
 
 class Claim:
     REGEX = re.compile('#(\d+) @ (\d+),(\d+): (\d+)x(\d+)')
+
+    def __str__(self):
+        return self.text
 
     def __init__(self, claim):
         self.text = claim
@@ -13,6 +17,22 @@ class Claim:
         self.iter_pos = list(self.coords)
         # Moves the pointer back a position so that next() returns the first value
         self.iter_pos[0] -= 1
+
+    def check_corners(self, claim):
+    #     Check 4 corners of comparison claim to see if any of them are inside
+        for corner in claim.corners():
+            if self.check(corner[0], corner[1]):
+                return True
+        return False
+
+    def corners(self):
+        res = [
+            (self.coords[0], self.coords[1]),
+            (self.x_end(), self.coords[1]),
+            (self.coords[0], self.y_end()),
+            (self.x_end(), self.y_end()),
+        ]
+        return res
 
     def x_end(self):
         return self.coords[0] + self.size[0] - 1
@@ -67,22 +87,13 @@ class Claim:
 
 
 def part1(input):
-    scanned = []
     hits = []
-    for line in input.splitlines():
-        c = Claim(line)
-        print(c.num)
-
-        # For each coordinate in the claim
-        for x, y in c:
-            # print(x, y)
-            # For each claim already scanned
-            for prev in scanned:
-                # If the coordinate is a hit
-                if prev.check(x, y):
-                    # Append the coordinates to the list of hits
-                    hits.append((x, y))
-        scanned.append(c)
+    input = [Claim(line) for line in input.splitlines()]
+    for a, b in itertools.combinations(input, 2):
+        if a.check_corners(b):
+            print(''.center(50, '='))
+            # print('Overlapping corner between:\n{}\n{}'.format(a, b))
+            print('Corner of\n{}\nis inside\n{}'.format(a, b))
     return len(hits)
 
 def part2(input):
