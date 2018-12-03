@@ -20,17 +20,56 @@ class Claim:
 
     def check_corners(self, claim):
     #     Check 4 corners of comparison claim to see if any of them are inside
-        for corner in claim.corners():
+        for i, corner in enumerate(claim.corners()):
             if self.check(corner[0], corner[1]):
-                return True
-        return False
+                # Corners are numbered starting with the origin and going clockwise
+                return i
+
+    def overlap(self, claim):
+        c = self.check_corners(claim)
+        if c is not None:
+            if c == 0:
+                origin = claim.coords
+                size = (
+                    self.x_end() - origin[0],
+                    self.y_end() - origin[1]
+                )
+            elif c == 1:
+                origin = (self.coords[0], claim.coords[1])
+                size = (
+                    claim.x_end() - origin[0],
+                    self.y_end() - origin[1]
+                )
+            elif c == 2:
+              origin = self.coords
+              size = (
+                  claim.x_end() - origin[0],
+                  claim.y_end() - origin[1]
+              )
+            elif c == 3:
+                origin = (claim.coords[0], self.coords[1])
+                size = (
+                    self.x_end() - origin[0],
+                    claim.y_end() - origin[1]
+                )
+
+            ol = Claim('#{} @ {},{}: {}x{}'.format(
+                0,
+                origin[0],
+                origin[1],
+                size[0] + 1,
+                size[1] + 1
+            ))
+            return ol
+        else:
+            return None
 
     def corners(self):
         res = [
             (self.coords[0], self.coords[1]),
             (self.x_end(), self.coords[1]),
-            (self.coords[0], self.y_end()),
             (self.x_end(), self.y_end()),
+            (self.coords[0], self.y_end())
         ]
         return res
 
@@ -87,23 +126,27 @@ class Claim:
 
 
 def part1(input):
-    hits = []
+    hits = 0
     input = [Claim(line) for line in input.splitlines()]
     for a, b in itertools.combinations(input, 2):
-        if a.check_corners(b):
+        overlap = a.overlap(b)
+        if overlap is not None:
             print(''.center(50, '='))
-            # print('Overlapping corner between:\n{}\n{}'.format(a, b))
-            print('Corner of\n{}\nis inside\n{}'.format(a, b))
-    return len(hits)
+            # # print('Overlapping corner between:\n{}\n{}'.format(a, b))
+            print('Corner of {} is inside {}'.format(a.num, b.num))
+            hits += 1
+            print(overlap)
+    return hits
 
 def part2(input):
     return
 
 if __name__ == '__main__':
-    from pathlib import Path
-    p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
-    with open(p / 'day3.txt', 'r') as file:
-        input = file.read()
-    print(part1(input))
+    # from pathlib import Path
+    # p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
+    # with open(p / 'day3.txt', 'r') as file:
+    #     input = file.read()
+    # print(part1(input))
     # print(part2(input))
     # print(part1('#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2'))
+    print(part1('#0 @ 0,0: 4x3\n#1 @ 4,0: 4x3\n#2 @ 2,2: 4x4\n#3 @ 0,5: 3x2\n#4 @ 5,5: 4x2\n'))
