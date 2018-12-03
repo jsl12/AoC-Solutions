@@ -89,10 +89,10 @@ def part2(input):
     return
 
 if __name__ == '__main__':
-    # from pathlib import Path
-    # p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
-    # with open(p / 'day3.txt', 'r') as file:
-    #     input = file.read()
-    # print(part1(input))
+    from pathlib import Path
+    p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
+    with open(p / 'day3.txt', 'r') as file:
+        input = file.read()
+    print(part1(input))
     # print(part2(input))
-    print(part1('#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2'))
+    # print(part1('#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2'))
