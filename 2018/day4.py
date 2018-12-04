@@ -8,8 +8,13 @@ EVENT_REGEX = re.compile('.*(begins shift|falls asleep|wakes up)')
 
 def part1(input):
     df = event_df(input)
-    df = time_df(df)
-    return
+    dft = time_df(df)
+    df = count_df(dft)
+
+    guard = df[df['Count'] == df['Count'].max()].index[0]
+    min_totals = dft[dft['Guard'] == guard].select_dtypes('bool').sum()
+    min = min_totals[min_totals == min_totals.max()].index[0]
+    return guard * min
 
 def event_df(input):
     df = pd.DataFrame([proc_line(line) for line in input.splitlines()])
@@ -34,13 +39,23 @@ def time_df(event_df):
         for date, event in df[df['Event'] == 'falls asleep'].iterrows():
             # Find the next wakeup time
             wakeup = df[df.index > date].iloc[0]
-            for i in range(date.minute, wakeup.name.minute - 1):
+            for i in range(date.minute, wakeup.name.minute):
                 res[-1][i] = True
 
         # print(day[0])
         # print(find_guard(day))
     df = pd.DataFrame(res)
     df = df.set_index('Date')
+    return df
+
+def count_df(time_df):
+    guards = []
+    counts = []
+    for g in time_df.groupby('Guard'):
+        guards.append(g[0])
+        counts.append(g[1].select_dtypes('bool').sum(axis=1).sum())
+    df = pd.DataFrame({'Guard': guards, 'Count': counts})
+    df = df.set_index('Guard')
     return df
 
 def correct_begin(index):
