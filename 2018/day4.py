@@ -20,16 +20,31 @@ def event_df(input):
 
 def time_df(event_df):
     event_df.index = [correct_begin(idx) for idx in event_df.index]
-
+    res = []
     for day in event_df.groupby(pd.Grouper(freq='D')):
-        print(day)
-    return event_df
+        res.append({
+            'Date': day[0],
+            'Guard': int(find_guard(day)),
+        })
+        for i in range(60):
+            res[-1][i] = False
+        # print(day[0])
+        # print(find_guard(day))
+    df = pd.DataFrame(res)
+    df = df.set_index('Date')
+    return df
 
 def correct_begin(index):
     if index.hour == 23:
         return index.replace(minute=0) + timedelta(hours=1)
     else:
         return index
+
+def find_guard(day):
+    df = day[1]
+    found = df[df['Event'] == 'begins shift']['Guard']
+    assert len(found) == 1
+    return found[0]
 
 def proc_line(line):
     try:
