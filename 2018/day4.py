@@ -1,6 +1,6 @@
 import re
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 DATE_REGEX = re.compile('\[\d+-(\d+-\d+ \d+:\d+)\]')
 BEGIN_REGEX = re.compile('.+Guard #(\d+)')
@@ -8,6 +8,7 @@ EVENT_REGEX = re.compile('.*(begins shift|falls asleep|wakes up)')
 
 def part1(input):
     df = event_df(input)
+    df = time_df(df)
     return
 
 def event_df(input):
@@ -16,6 +17,19 @@ def event_df(input):
     df.index = pd.to_datetime(df.index)
     df = df.sort_index()
     return df
+
+def time_df(event_df):
+    event_df.index = [correct_begin(idx) for idx in event_df.index]
+
+    for day in event_df.groupby(pd.Grouper(freq='D')):
+        print(day)
+    return event_df
+
+def correct_begin(index):
+    if index.hour == 23:
+        return index.replace(minute=0) + timedelta(hours=1)
+    else:
+        return index
 
 def proc_line(line):
     try:
