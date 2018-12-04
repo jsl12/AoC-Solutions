@@ -16,6 +16,25 @@ def part1(input):
     min = min_totals[min_totals == min_totals.max()].index[0]
     return guard * min
 
+def part2(input):
+    df = event_df(input)
+    dft = time_df(df)
+    guard, min = max_minute(dft)
+    return guard * min
+
+def max_minute(df):
+    res = [(g[0], g[1].select_dtypes('bool').sum()) for g in df.groupby('Guard')]
+    res2 = [(g[0], g[1].loc[g[1].iloc[:].idxmax()], g[1].idxmax()) for g in res]
+    df = pd.DataFrame({
+        'Guard': [g[0] for g in res2],
+        'Minutes Asleep': [g[1] for g in res2],
+        'Max Minute': [g[2] for g in res2]
+    }).set_index('Guard')
+
+    most_asleep_guard = df['Minutes Asleep'].idxmax()
+    sleepiest_minute = df.loc[most_asleep_guard]['Max Minute']
+    return most_asleep_guard, sleepiest_minute
+
 def event_df(input):
     df = pd.DataFrame([proc_line(line) for line in input.splitlines()])
     df = df.set_index('Date')
@@ -82,13 +101,10 @@ def proc_line(line):
     }
     return res
 
-def part2(input):
-    return
-
 if __name__ == '__main__':
     from pathlib import Path
     p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
     with open(p / 'day4.txt', 'r') as file:
         input = file.read()
     print(part1(input))
-    # print(part2(input))
+    print(part2(input))
