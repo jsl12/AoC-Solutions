@@ -2,7 +2,7 @@ import re
 import pandas as pd
 from datetime import datetime
 
-DATE_REGEX = re.compile('\[(\d+-\d+-\d+ \d+:\d+)\]')
+DATE_REGEX = re.compile('\[\d+-(\d+-\d+ \d+:\d+)\]')
 BEGIN_REGEX = re.compile('.+Guard #(\d+)')
 EVENT_REGEX = re.compile('.*(begins shift|falls asleep|wakes up)')
 
@@ -12,7 +12,9 @@ def part1(input):
 
 def event_df(input):
     df = pd.DataFrame([proc_line(line) for line in input.splitlines()])
-    df = df.set_index('Date').sort_index()
+    df = df.set_index('Date')
+    df.index = pd.to_datetime(df.index)
+    df = df.sort_index()
     return df
 
 def proc_line(line):
@@ -21,7 +23,7 @@ def proc_line(line):
     except AttributeError:
         g = None
     res = {
-        'Date': datetime.strptime(DATE_REGEX.match(line).group(1), '%Y-%m-%d %H:%M'),
+        'Date': datetime.strptime(DATE_REGEX.match(line).group(1), '%m-%d %H:%M'),
         'Guard': g,
         'Event': EVENT_REGEX.match(line).group(1)
     }
