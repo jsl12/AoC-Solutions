@@ -28,6 +28,15 @@ def time_df(event_df):
         })
         for i in range(60):
             res[-1][i] = False
+
+        df = day[1]
+        # For each falling asleep event
+        for date, event in df[df['Event'] == 'falls asleep'].iterrows():
+            # Find the next wakeup time
+            wakeup = df[df.index > date].iloc[0]
+            for i in range(date.minute, wakeup.name.minute - 1):
+                res[-1][i] = True
+
         # print(day[0])
         # print(find_guard(day))
     df = pd.DataFrame(res)
