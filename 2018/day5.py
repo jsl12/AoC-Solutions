@@ -1,5 +1,5 @@
 def part1(input):
-    res = input
+    res = input.replace('\n', '')
     i = 0
 
     def check():
@@ -40,9 +40,7 @@ if __name__ == '__main__':
     p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
     with open(p / 'day5.txt', 'r') as file:
         input = file.read()
-        print(part1(input[:100]))
 
     # input = 'dabAcCaCBAcCcaDA'
     print(part1(input))
-
     # print(part2(input))
