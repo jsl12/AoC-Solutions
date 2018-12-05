@@ -32,8 +32,17 @@ def react(input):
         check()
     return res
 
+def remove(input, lower_base):
+    input = input.replace(lower_base, '')
+    input = input.replace(lower_base.upper(), '')
+    return input
+
 def part2(input):
-    return
+    res = []
+    for i in range(ord('a'), ord('z') + 1):
+        removed = remove(input, chr(i))
+        res.append(len(react(removed)))
+    return min(res)
 
 if __name__ == '__main__':
     from pathlib import Path
@@ -43,4 +52,4 @@ if __name__ == '__main__':
 
     # input = 'dabAcCaCBAcCcaDA'
     print(part1(input))
-    # print(part2(input))
+    print(part2(input))
