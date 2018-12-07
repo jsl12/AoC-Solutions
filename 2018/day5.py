@@ -45,11 +45,8 @@ def part2(input):
     return min(res)
 
 if __name__ == '__main__':
-    from pathlib import Path
-    p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
-    with open(p / 'day5.txt', 'r') as file:
-        input = file.read()
-
-    # input = 'dabAcCaCBAcCcaDA'
+    import input as inp
+    DAY = 5
+    input = inp.read(DAY)
     print(part1(input))
     print(part2(input))

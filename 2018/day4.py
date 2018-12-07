@@ -102,9 +102,8 @@ def proc_line(line):
     return res
 
 if __name__ == '__main__':
-    from pathlib import Path
-    p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
-    with open(p / 'day4.txt', 'r') as file:
-        input = file.read()
+    import input as inp
+    DAY = 4
+    input = inp.read(DAY)
     print(part1(input))
     print(part2(input))

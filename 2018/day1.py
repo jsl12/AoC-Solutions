@@ -26,10 +26,9 @@ def rotate(input, n=1):
     return input[n:] + input[:n]
 
 if __name__ == '__main__':
-    from pathlib import Path
-    p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
-    with open(p / 'day1.txt', 'r') as file:
-        input = file.read()
+    import input as inp
+    DAY = 1
+    input = inp.read(DAY)
     print(part1(input))
     # print(part2(input))
     print(part2('+1\n-1'))

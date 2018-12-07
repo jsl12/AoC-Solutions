@@ -44,9 +44,8 @@ def solution(a, b):
     return res
 
 if __name__ == '__main__':
-    from pathlib import Path
-    p = Path(r'C:\Users\lanca_000\Documents\Software\Python\AoC Benchmark\AoC-Inputs\2018')
-    with open(p / 'day2.txt', 'r') as file:
-        input = file.read()
+    import input as inp
+    DAY = 2
+    input = inp.read(DAY)
     print(part1(input))
     print(part2(input))
