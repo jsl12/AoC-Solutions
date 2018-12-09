@@ -5,6 +5,7 @@ def part1(input):
     return res
 
 def part2(input):
+    # TODO refactor to use sets
     input = [int(line) for line in input.splitlines()]
     # input = [int(line) for line in input.splitlines()][:10]
     new_f = 0
@@ -30,8 +31,8 @@ if __name__ == '__main__':
     DAY = 1
     input = inp.read(DAY)
     print(part1(input))
-    # print(part2(input))
-    print(part2('+1\n-1'))
-    print(part2('+3\n+3\n+4\n-2\n-4\n'))
-    print(part2('-6\n+3\n+8\n+5\n-6'))
-    print(part2('+7\n+7\n-2\n-7\n-4'))
+    print(part2(input))
+    # print(part2('+1\n-1'))
+    # print(part2('+3\n+3\n+4\n-2\n-4\n'))
+    # print(part2('-6\n+3\n+8\n+5\n-6'))
+    # print(part2('+7\n+7\n-2\n-7\n-4'))
