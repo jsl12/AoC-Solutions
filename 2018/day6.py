@@ -1,19 +1,17 @@
 import numpy as np
 import re
 
-REGEX = re.compile('.*(\d+), (\d+)')
+REGEX = re.compile('(\d+), (\d+)')
 
 def parse(line):
     match = REGEX.match(line.strip())
     assert match is not None
     return int(match.group(1)), int(match.group(2))
 
-def create_space(input):
-    min_x = min([c[0] for c in input])
-    max_x = max([c[0] for c in input])
-    min_y = min([c[1] for c in input])
-    max_y = max([c[1] for c in input])
-    res = np.zeros((max_x, max_y), order='F', dtype=np.int16)
+def create_space(input, value=0, offset=3):
+    max_x = max([c[0] for c in input]) + offset
+    max_y = max([c[1] for c in input]) + offset
+    res = np.full((max_x, max_y), value, order='F')
     return res
 
 def distance(coord, capital):
@@ -33,6 +31,22 @@ def scan_space(space, input):
             it.iternext()
     return space
 
+def get_counts(space, inputs):
+    counts = np.arange(len(inputs))
+    with np.nditer(counts, op_flags=['readwrite'], order='F') as it:
+        for x in it:
+            counts[x] = len(space[space == x])
+    return counts
+
+def part1(input):
+    input = [parse(line) for line in input.splitlines()]
+    visualize_capitals(input, 'sample_capitals.txt')
+    space = create_space(input)
+    space = scan_space(space, input)
+    counts = get_counts(space, input)
+    visualize(space, 'sample_field.txt')
+    return counts
+
 def visualize(space, file):
     with open(file, 'w') as f:
         for row in space:
@@ -40,38 +54,30 @@ def visualize(space, file):
             f.write(''.join(row) + '\n')
 
 def visualize_capitals(input, file):
-    max_x = max([c[0] for c in input]) + 3
-    max_y = max([c[1] for c in input]) + 3
+    space = create_space(input, '.')
     for i, cap in enumerate(input):
         space[cap] = chr(i + ord('A'))
     with open(file, 'w') as f:
         for line in space:
             f.write(''.join(line.tolist())+'\n')
 
-def part1(input):
-    input = [parse(line) for line in input.strip().splitlines()]
-    # visualize_capitals(input, 'sample_capitals.txt')
-    space = create_space(input)
-    space = scan_space(space, input)
-    counts = np.arange(len(input))
-    with np.nditer(counts, op_flags=['readwrite']) as it:
-        print(it)
-    # visualize(space, 'sample_field.txt')
-    return
-
 def part2(input):
     return
 
 if __name__ == '__main__':
-    import input as inp
-    DAY = 6
-    input = inp.read(DAY)
-    input = '''1, 1
-        1, 6
-        8, 3
-        3, 4
-        5, 5
-        8, 9
-        '''
-    print(part1(input))
-    print(part2(input))
+    # import input as inp
+    # DAY = 6
+    # input = inp.read(DAY)
+    # print(part1(input))
+    # print(part2(input))
+
+    sample_input = [
+        (1, 1),
+        (1, 6),
+        (8, 3),
+        (3, 4),
+        (5, 5),
+        (8, 9),
+    ]
+    sample_input = '\n'.join(['{}, {}'.format(cap[0], cap[1]) for cap in sample_input])
+    print(part1(sample_input))
