@@ -6,7 +6,7 @@ REGEX = re.compile('(\d+), (\d+)')
 def parse(line):
     match = REGEX.match(line.strip())
     assert match is not None
-    return int(match.group(1)), int(match.group(2))
+    return int(match.group(2)), int(match.group(1))
 
 def create_space(input, value=0, offset=3):
     max_x = max([c[0] for c in input]) + offset
@@ -38,6 +38,19 @@ def get_counts(space, inputs):
             counts[x] = len(space[space == x])
     return counts
 
+def filter_borders(space, inputs):
+    res = set()
+    for i, row in enumerate(space):
+        if i == 0 or i == space.shape[1]:
+            res.update(row)
+        else:
+            res.update([row[0], row[-1]])
+    filtered = [i for i in range(len(inputs))]
+    [filtered.pop(i) for i in sorted(res)[-1:0:-1]]
+    # for i in sorted(res)[-1:0:-1]:
+    #     filtered.pop(i)
+    return filtered
+
 def part1(input):
     input = [parse(line) for line in input.splitlines()]
     visualize_capitals(input, 'sample_capitals.txt')
@@ -45,7 +58,8 @@ def part1(input):
     space = scan_space(space, input)
     counts = get_counts(space, input)
     visualize(space, 'sample_field.txt')
-    return counts
+    valid_counts = [counts[i] for i in filter_borders(space, input)]
+    return max(valid_counts)
 
 def visualize(space, file):
     with open(file, 'w') as f:
@@ -65,19 +79,19 @@ def part2(input):
     return
 
 if __name__ == '__main__':
-    # import input as inp
-    # DAY = 6
-    # input = inp.read(DAY)
-    # print(part1(input))
+    import input as inp
+    DAY = 6
+    input = inp.read(DAY)
+    print(part1(input))
     # print(part2(input))
-
-    sample_input = [
-        (1, 1),
-        (1, 6),
-        (8, 3),
-        (3, 4),
-        (5, 5),
-        (8, 9),
-    ]
-    sample_input = '\n'.join(['{}, {}'.format(cap[0], cap[1]) for cap in sample_input])
-    print(part1(sample_input))
+    #
+    # sample_input = [
+    #     (1, 1),
+    #     (1, 6),
+    #     (8, 3),
+    #     (3, 4),
+    #     (5, 5),
+    #     (8, 9),
+    # ]
+    # sample_input = '\n'.join(['{}, {}'.format(cap[0], cap[1]) for cap in sample_input])
+    # print(part1(sample_input))
