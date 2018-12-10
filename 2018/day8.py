@@ -29,7 +29,7 @@ def part1(input):
                 iterator.iternext()
         return sum(input[start:end])
 
-    with np.nditer(input, op_flags=['read'], flags=['f_index']) as it:
+    with np.nditer(input, op_flags=['readonly'], flags=['f_index']) as it:
         while not it.finished:
             total = sum_node(it)
     return total
