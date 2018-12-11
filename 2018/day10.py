@@ -5,9 +5,11 @@ REGEX = re.compile('position=< ?([-\d]+), +([-\d]+)> velocity=< ?([-\d]+), +([-\
 
 def parse(line):
     match = REGEX.match(line)
-    pos = (match.group(2), match.group(3))
-    vel = (match.group(3), match.group(4))
-    return pos, vel
+    traj = {
+        'pos': (match.group(2), match.group(3)),
+        'vel': (match.group(3), match.group(4))
+    }
+    return traj
 
 def part1(input):
     input = [parse(line) for line in input.splitlines()]
