@@ -1,6 +1,17 @@
+import re
 import numpy as np
 
+REGEX = re.compile('position=< ?([-\d]+), +([-\d]+)> velocity=< ?([-\d]+), +([-\d]+)>')
+
+def parse(line):
+    match = REGEX.match(line)
+    pos = (match.group(2), match.group(3))
+    vel = (match.group(3), match.group(4))
+    return pos, vel
+
 def part1(input):
+    input = [parse(line) for line in input.splitlines()]
+
     return
 
 def part2(input):
