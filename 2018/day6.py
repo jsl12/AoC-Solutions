@@ -53,11 +53,11 @@ def filter_borders(space, inputs):
 
 def part1(input):
     input = [parse(line) for line in input.splitlines()]
-    visualize_capitals(input, 'sample_capitals.txt')
+    # visualize_capitals(input, 'sample_capitals.txt')
     space = create_space(input)
     space = scan_space(space, input)
     counts = get_counts(space, input)
-    visualize(space, 'sample_field.txt')
+    # visualize(space, 'sample_field.txt')
     valid_counts = [counts[i] for i in filter_borders(space, input)]
     return max(valid_counts)
 
