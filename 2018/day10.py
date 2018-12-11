@@ -1,32 +1,46 @@
 import re
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
-REGEX = re.compile('position=< ?([-\d]+), +([-\d]+)> velocity=< ?([-\d]+), +([-\d]+)>')
-
-class Point:
-    def __init__(self, line):
-        match = REGEX.match(line)
-        self.pos = (int(match.group(2)), int(match.group(3)))
-        self.vel = (int(match.group(3)),int(match.group(4)))
-
-    def advance(self, t=1):
-        self.pos = (
-            self.pos[0] + (self.vel[0] * t),
-            self.pos[1] + (self.vel[1] * t)
-        )
-
-def visualize(points, step, n):
-    df = pd.DataFrame({'x': [pt.pos[0] for pt in points], 'y': [pt.pos[1] for pt in points]}).set_index('x')
+def visualize(pos_df, close=True):
+    df = pos_df.set_index('x').sort_index()
     fig, ax = plt.subplots(figsize=(19.2, 10.8))
     ax.plot(df, '.')
     fig.savefig('day10.png')
-    plt.close(fig)
+    if close:
+        plt.close(fig)
+    else:
+        return fig, ax
+
+def make_dfs(input):
+    REGEX = re.compile('position=< ?([-\d]+), +([-\d]+)> velocity=< ?([-\d]+), +([-\d]+)>')
+    lines = input.splitlines()
+    length = len(lines)
+    x = np.empty(length, dtype=np.int32)
+    y = np.empty(length, dtype=np.int32)
+    x_vel = np.empty(length, dtype=np.int32)
+    y_vel = np.empty(length, dtype=np.int32)
+
+    def parse(line):
+        match = REGEX.match(line)
+        return {
+            'pos': {'x': int(match.group(1)), 'y': int(match.group(2))},
+            'vel': {'x': int(match.group(3)), 'y': int(match.group(4))},
+        }
+
+    for i, line in enumerate(lines):
+        point = parse(line)
+        x[i] = point['pos']['x']
+        y[i] = point['pos']['y']
+        x_vel[i] = point['vel']['x']
+        y_vel[i] = point['vel']['y']
+    pos_df = pd.DataFrame({'x': x, 'y': y})
+    vel_df = pd.DataFrame({'x': x_vel, 'y': y_vel})
+    return pos_df, vel_df
 
 def part1(input):
-    pts = [Point(line) for line in input.splitlines()]
-    [pt.advance(1000) for pt in pts]
-    visualize(pts)
+    dfp, dfv = make_dfs(input)
 
     return
 
