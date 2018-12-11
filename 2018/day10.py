@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-def visualize(pos_df, close=True):
-    df = pos_df.set_index('x').sort_index()
-    fig, ax = plt.subplots(figsize=(19.2, 10.8))
+def visualize(pos_df, n, fig=None, ax=None, close=True):
+    df = pos_df[n]
+    if fig is None and ax is None:
+        fig, ax = plt.subplots(figsize=(19.2, 10.8))
     ax.plot(df, '.')
     fig.savefig('day10.png')
     if close:
@@ -13,7 +14,7 @@ def visualize(pos_df, close=True):
     else:
         return fig, ax
 
-def make_dfs(input):
+def make_dfs(input, n=1000):
     REGEX = re.compile('position=< ?([-\d]+), +([-\d]+)> velocity=< ?([-\d]+), +([-\d]+)>')
     lines = input.splitlines()
     length = len(lines)
@@ -35,13 +36,22 @@ def make_dfs(input):
         y[i] = point['pos']['y']
         x_vel[i] = point['vel']['x']
         y_vel[i] = point['vel']['y']
-    pos_df = pd.DataFrame({'x': x, 'y': y})
     vel_df = pd.DataFrame({'x': x_vel, 'y': y_vel})
-    return pos_df, vel_df
+
+    # construct position over time df
+    idx = pd.MultiIndex.from_product([['x', 'y'], np.arange(n)])
+    pos_df = pd.DataFrame(columns=idx, index=np.arange(length))
+    for (axis, t), values in pos_df.iteritems():
+        if axis == 'x':
+            pos_df.loc[:, (axis, t)] = x + (t * x_vel)
+        elif axis == 'y':
+            pos_df.loc[:, (axis, t)] = y + (t * y_vel)
+
+    return pos_df
 
 def part1(input):
-    dfp, dfv = make_dfs(input)
-
+    dfp = make_dfs(input, n=5000)
+    visualize(dfp, 1000)
     return
 
 def part2(input):
