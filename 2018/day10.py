@@ -20,6 +20,17 @@ def visualize(pos_df, n, type='single', fig=None, ax=None, close=True):
     else:
         return fig, ax
 
+def visualize_set(df, start, n):
+    for i in range(n):
+        fig, ax = plt.subplots(figsize=(19.2,10.8))
+        ax.plot(df['x'][start+i], df['y'][start+i], '.')
+        ax.set_ylim(df['y'][start].min(), df['y'][start].max())
+        ax.set_xlim(df['x'][start].min(), df['x'][start].max())
+        file = 'day10_{}.png'.format(start+i)
+        fig.savefig(file)
+        print('saved to {}'.format(file))
+        plt.close(fig)
+
 def determine_extents(x, y, x_vel, y_vel):
     df = pd.DataFrame({
         'x': x,
@@ -90,8 +101,9 @@ def part1(input):
     for i, col in dfp['x'].iteritems():
         bb = bounding_box(col, dfp['y'][i])
         if bb > prev_bb and prev_bb != 0:
-            continue
+            break
         prev_bb = bb
+    visualize_set(dfp, i - 5, 10)
     return
 
 def part2(input):
