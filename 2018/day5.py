@@ -2,7 +2,7 @@ def part1(input):
     return len(react(input))
 
 def react(input):
-    res = input.replace('\n', '')
+    res = ''.join([line for line in input.splitlines()])
     i = 0
 
     def check():
