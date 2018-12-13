@@ -90,7 +90,7 @@ def make_dfs(input, n):
         df.loc[i] = r
 
     pos_df['x'] = df.multiply(x_vel, axis=0).add(x, axis=0)
-    pos_df['y'] = df.multiply(y_vel, axis=0).add(y, axis=0)
+    pos_df['y'] = df.multiply(y_vel, axis=0).add(y, axis=0) * -1
 
     return pos_df
 
@@ -103,7 +103,8 @@ def part1(input):
         if bb > prev_bb and prev_bb != 0:
             break
         prev_bb = bb
-    visualize_set(dfp, i - 5, 10)
+    # visualize_set(dfp, i - 5, 10)
+    # visualize(dfp, i-1)
     return
 
 def part2(input):
