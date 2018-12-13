@@ -52,7 +52,7 @@ def bounding_box(x, y):
     )
     return size[0] * size[1]
 
-def make_dfs(input, n):
+def make_dfs(input, n=None):
     REGEX = re.compile('position=< ?([-\d]+), +([-\d]+)> velocity=< ?([-\d]+), +([-\d]+)>')
     lines = input.splitlines()
     length = len(lines)
@@ -75,10 +75,10 @@ def make_dfs(input, n):
         x_vel[i] = point['vel']['x']
         y_vel[i] = point['vel']['y']
 
-    n = determine_extents(x, y, x_vel, y_vel)
-
     # construct position over time df
-    if isinstance(n, tuple):
+    if n is None:
+        n = determine_extents(x, y, x_vel, y_vel)
+    elif isinstance(n, tuple):
         r = np.arange(n[0], n[1], dtype=np.int32)
     elif isinstance(n, int):
         r = np.arange(n, dtype=np.int32)
@@ -95,7 +95,7 @@ def make_dfs(input, n):
     return pos_df
 
 def part1(input):
-    dfp = make_dfs(input, n=(1000, 10000))
+    dfp = make_dfs(input)
 
     prev_bb = 0
     for i, col in dfp['x'].iteritems():
