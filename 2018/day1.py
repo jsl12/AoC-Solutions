@@ -5,23 +5,17 @@ def part1(input):
     return res
 
 def part2(input):
-    # TODO refactor to use sets
     input = [int(line) for line in input.splitlines()]
-    # input = [int(line) for line in input.splitlines()][:10]
-    new_f = 0
-    prev = [0]
-
-    # for c in input:
-    # while new_f not in prev:
+    f = 0
+    prev = set([0])
     while True:
-        new_f = prev[-1] + input[0]
+        new_f = f + input[0]
         if new_f in prev:
             return new_f
         else:
-            prev.append(new_f)
+            prev.add(new_f)
             input = rotate(input)
-            if len(prev) > 10000:
-                return 'Failed'
+        f = new_f
 
 def rotate(input, n=1):
     return input[n:] + input[:n]
