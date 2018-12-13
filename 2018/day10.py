@@ -10,12 +10,36 @@ def visualize(pos_df, n, type='single', fig=None, ax=None, close=True):
         ax.plot(pos_df['x'][n], pos_df['y'][n], '.')
     elif type == 'moving':
         for i, row in pos_df.iterrows():
-            ax.plot(row['x'][:n], row['y'][:n], 'b')
+            x_data = row['x'][:n]
+            y_data = row['y'][:n]
+            ax.plot(x_data, y_data, 'b')
+            ax.plot(x_data.iloc[-1], y_data.iloc[-1], '.r')
     fig.savefig('day10.png')
     if close:
         plt.close(fig)
     else:
         return fig, ax
+
+def determine_extents(x, y, x_vel, y_vel):
+    df = pd.DataFrame({
+        'x': x,
+        'y': y,
+        'x_vel': x_vel,
+        'y_vel': y_vel
+    })
+    x1 = df.min()['x']
+    x2 = df[df['x'] < 0]['x'].max()
+    x3 = df[df['x'] > 0]['x'].min()
+    start = abs(x1 - x2) / df['x_vel'].max()
+    end = abs(x1 - x3) / df['x_vel'].max()
+    return start, end
+
+def bounding_box(x, y):
+    size = (
+        x.max() - x.min(),
+        y.max() - y.min()
+    )
+    return size[0] * size[1]
 
 def make_dfs(input, n):
     REGEX = re.compile('position=< ?([-\d]+), +([-\d]+)> velocity=< ?([-\d]+), +([-\d]+)>')
@@ -39,12 +63,9 @@ def make_dfs(input, n):
         y[i] = point['pos']['y']
         x_vel[i] = point['vel']['x']
         y_vel[i] = point['vel']['y']
-    df = pd.DataFrame({
-        'x': x,
-        'y': y,
-        'x_vel': x_vel,
-        'y_vel': y_vel
-    })
+
+    n = determine_extents(x, y, x_vel, y_vel)
+
     # construct position over time df
     if isinstance(n, tuple):
         r = np.arange(n[0], n[1], dtype=np.int32)
@@ -63,10 +84,14 @@ def make_dfs(input, n):
     return pos_df
 
 def part1(input):
-    dfp = make_dfs(input, n=(8000, 10000))
-    fig, ax = visualize(dfp, 9000, close=False)
-    for i in range(10):
-        fig, ax = visualize(dfp, 200*i, close=False, fig=fig, ax=ax)
+    dfp = make_dfs(input, n=(1000, 10000))
+
+    prev_bb = 0
+    for i, col in dfp['x'].iteritems():
+        bb = bounding_box(col, dfp['y'][i])
+        if bb > prev_bb and prev_bb != 0:
+            continue
+        prev_bb = bb
     return
 
 def part2(input):
