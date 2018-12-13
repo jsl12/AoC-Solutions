@@ -2,12 +2,7 @@ def part1(input):
     return len(react(input))
 
 def react(input):
-    res = ''.join([line for line in input.splitlines()])
-    i = 0
-
-    def check():
-        nonlocal res
-        nonlocal i
+    def check(i, res):
         if 97 <= ord(res[i]) <= 122:
             # lower case letter
             if res[i + 1] == res[i].upper():
@@ -27,9 +22,13 @@ def react(input):
             i += 1
         else:
             print('Unrecognized char: {}'.format(input[i]))
+        return i, res
+
+    res = ''.join([line for line in input.splitlines()])
+    i = 0
 
     while i < len(res) - 1:
-        check()
+        i, res = check(i, res)
     return res
 
 def remove(input, lower_base):
