@@ -13,11 +13,10 @@ class Claim:
     def __init__(self, claim_str):
         self.text = claim_str
         match = self.REGEX.match(claim_str)
-        self.x = match.group(2)
-        self.y = match.group(3)
-        self.w = match.group(4)
-        self.h = match.group(5)
-
+        self.x = int(match.group(2))
+        self.y = int(match.group(3))
+        self.w = int(match.group(4))
+        self.h = int(match.group(5))
 
 def part1(input):
     input = [Claim(line) for line in input.splitlines()]
