@@ -18,14 +18,26 @@ class Claim:
         self.w = int(match.group(4))
         self.h = int(match.group(5))
 
-def part1(input):
-    input = [Claim(line) for line in input.splitlines()]
-    mx = np.array([c.x for c in input])
-    mx = max(mx) + input[mx.argmax()].w
+class Space:
+    def __repr__(self):
+        return '{} x {} grid with {} claims'.format(
+            self.space.shape[0],
+            self.space.shape[1],
+            len(self.claims)
+        )
 
-    my = np.array([c.y for c in input])
-    my = max(my) + input[my.argmax()].h
-    space = np.zeros((mx, my), dtype=np.int32)
+    def __init__(self, input):
+        self.claims = [Claim(line) for line in input.splitlines()]
+        mx = np.array([c.x for c in self.claims])
+        mx = max(mx) + self.claims[mx.argmax()].w
+
+        my = np.array([c.y for c in self.claims])
+        my = max(my) + self.claims[my.argmax()].h
+        self.space = np.zeros((mx, my), dtype=np.int32)
+
+def part1(input):
+    sp = Space(input)
+        # np.place(space, placement_mask(c), space[c.x:c.x+c.w, c.y:c.y+c.h] + 1)
     return
 
 def part2(input):
