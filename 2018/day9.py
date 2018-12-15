@@ -6,7 +6,7 @@ class Game:
     REGEX = re.compile('(\d+) players; last marble is worth (\d+) points')
 
     def __repr__(self):
-        return 'Circle: {}'.format(' '.join([str(m) for m in self.circle[:self.size]]))
+        return 'Circle: {}'.format(' '.join([str(m) for m in self.circle]))
 
     def __init__(self, input):
         match = self.REGEX.match(input)
@@ -15,24 +15,37 @@ class Game:
         self.players = cycle(range(self.player_count))
 
         self.scores = np.zeros(self.player_count, dtype=np.int32)
-        self.circle = np.zeros(self.last_marble, dtype=np.int32)
-        self.circle[0] = 0
-        self.marble = 1
+        self._circle = np.zeros(self.last_marble, dtype=np.int32)
         self.size = 1
+        self.marble = 1
         self.current_marble = 1
 
-    def take_turn(self):
+    @property
+    def circle(self):
+        return self._circle[:self.size]
+
+    def insert(self, position, marble_val):
         self.size += 1
-        self.current_marble += 2
-        if self.current_marble > (self.size - 1):
-            self.current_marble -= self.size
-        self.circle[self.current_marble] = self.marble
+        if position >= self.size:
+            position = 1
+        self.circle[position+1:] = self.circle[position:-1]
+        self.circle[position] = marble_val
+        return position
+
+    def take_turn(self):
+        self.current_marble = self.insert(self.current_marble+2, self.marble)
         self.marble += 1
 
         next(self.players)
 
 def part1(input):
     g = Game(input)
+    # n=10
+    # vals = [0, 8, 4, 9, 2, 5, 1, 6, 3, 7]
+    # g.size = len(vals)
+    # g.circle[:len(vals)] = vals
+    # g.current_marble = 3
+    # g.insert(5, 10)
     while g.marble < g.last_marble:
         g.take_turn()
     return
