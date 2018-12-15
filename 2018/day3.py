@@ -1,5 +1,5 @@
 import re
-import itertools
+import numpy as np
 
 class Claim:
     REGEX = re.compile('#(\d+) @ (\d+),(\d+): (\d+)x(\d+)')
@@ -7,105 +7,21 @@ class Claim:
     def __str__(self):
         return self.text
 
-    def __init__(self, claim):
-        self.text = claim
-        match = self.REGEX.match(self.text)
-        self.num = int(match.group(1))
-        self.coords = (int(match.group(2)), int(match.group(3)))
-        self.size = (int(match.group(4)), int(match.group(5)))
+    def __repr__(self):
+        return self.text
 
-        self.iter_pos = list(self.coords)
-        # Moves the pointer back a position so that next() returns the first value
-        self.iter_pos[0] -= 1
-
-    def check_corners(self, claim):
-    #     Check 4 corners of comparison claim to see if any of them are inside
-        for i, corner in enumerate(claim.corners()):
-            if self.check(corner[0], corner[1]):
-                # Corners are numbered starting with the origin and going clockwise
-                return i
-
-    def overlap(self, claim):
-        c = self.check_corners(claim)
-        if c is not None:
-            if c == 0:
-                origin = claim.coords
-                size = (
-                    self.x_end() - origin[0],
-                    self.y_end() - origin[1]
-                )
-            elif c == 1:
-                origin = (self.coords[0], claim.coords[1])
-                size = (
-                    claim.x_end() - origin[0],
-                    self.y_end() - origin[1]
-                )
-            elif c == 2:
-              origin = self.coords
-              size = (
-                  claim.x_end() - origin[0],
-                  claim.y_end() - origin[1]
-              )
-            elif c == 3:
-                origin = (claim.coords[0], self.coords[1])
-                size = (
-                    self.x_end() - origin[0],
-                    claim.y_end() - origin[1]
-                )
-
-            ol = Claim('#{} @ {},{}: {}x{}'.format(
-                0,
-                origin[0],
-                origin[1],
-                size[0] + 1,
-                size[1] + 1
-            ))
-            return ol
-        else:
-            return None
-
-    def corners(self):
-        res = [
-            (self.coords[0], self.coords[1]),
-            (self.x_end(), self.coords[1]),
-            (self.x_end(), self.y_end()),
-            (self.coords[0], self.y_end())
-        ]
-        return res
-
-    def x_end(self):
-        return self.coords[0] + self.size[0] - 1
-
-    def x_check(self, x=None):
-        if x is None:
-            x = self.iter_pos[0]
-        return self.coords[0] <= x <= self.x_end()
-
-    def y_end(self):
-        return self.coords[1] + self.size[1] - 1
-
-    def y_check(self, y=None):
-        if y is None:
-            y = self.iter_pos[1]
-        return self.coords[1] <= y <= self.y_end()
-
-    def check(self, x=None, y=None):
-        hor = self.x_check(x)
-        ver = self.y_check(y)
-        return hor and ver
+    def __init__(self, claim_str):
+        self.text = claim_str
+        match = self.REGEX.match(claim_str)
+        self.x = match.group(2)
+        self.y = match.group(3)
+        self.w = match.group(4)
+        self.h = match.group(5)
 
 
 def part1(input):
-    hits = 0
     input = [Claim(line) for line in input.splitlines()]
-    for a, b in itertools.combinations(input, 2):
-        overlap = a.overlap(b)
-        if overlap is not None:
-            print(''.center(50, '='))
-            print('Corner of {} is inside {}'.format(a.num, b.num))
-            print(overlap)
-            hits += 1
-    return hits
+    return
 
 def part2(input):
     return
