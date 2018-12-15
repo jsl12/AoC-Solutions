@@ -13,6 +13,7 @@ class Claim:
     def __init__(self, claim_str):
         self.text = claim_str
         match = self.REGEX.match(claim_str)
+        self.num = int(match.group(1))
         self.x = int(match.group(2))
         self.y = int(match.group(3))
         self.w = int(match.group(4))
@@ -28,17 +29,24 @@ class Space:
 
     def __init__(self, input):
         self.claims = [Claim(line) for line in input.splitlines()]
-        mx = np.array([c.x for c in self.claims])
-        mx = max(mx) + self.claims[mx.argmax()].w
-
-        my = np.array([c.y for c in self.claims])
-        my = max(my) + self.claims[my.argmax()].h
+        mx = np.array([c.x for c in self.claims]).max() + np.array([c.w for c in self.claims]).max()
+        my = np.array([c.y for c in self.claims]).max() + np.array([c.h for c in self.claims]).max()
         self.space = np.zeros((mx, my), dtype=np.int32)
+
+    def _place(self, claim):
+        self.space[sorted(list(range(claim.y, claim.y+claim.h)) * claim.w), list(range(claim.x, claim.x+claim.w)) * claim.h] += 1
+
+    def place_claims(self):
+        for c in self.claims:
+            self._place(c)
+
+    def multiple_owners(self):
+        return self.space[self.space > 1].size
 
 def part1(input):
     sp = Space(input)
-        # np.place(space, placement_mask(c), space[c.x:c.x+c.w, c.y:c.y+c.h] + 1)
-    return
+    sp.place_claims()
+    return sp.multiple_owners()
 
 def part2(input):
     return
