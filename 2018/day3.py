@@ -20,6 +20,12 @@ class Claim:
 
 def part1(input):
     input = [Claim(line) for line in input.splitlines()]
+    mx = np.array([c.x for c in input])
+    mx = max(mx) + input[mx.argmax()].w
+
+    my = np.array([c.y for c in input])
+    my = max(my) + input[my.argmax()].h
+    space = np.zeros((mx, my), dtype=np.int32)
     return
 
 def part2(input):
