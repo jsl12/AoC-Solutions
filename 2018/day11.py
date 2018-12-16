@@ -4,7 +4,11 @@ def part1(input):
     serial_num = int(input)
     space = np.empty((300,300), dtype=np.int32)
     assign_power(space, serial_num)
-    return max_square(space, 3)
+    values = max_square(space, 3)
+    return get_max_idx(values)
+
+def get_max_idx(values):
+    return np.unravel_index(values.argmax(), values.shape)[::-1]
 
 def assign_power(space, serial_num):
     with np.nditer(space, flags=['multi_index'], op_flags=['readwrite']) as it:
@@ -24,7 +28,7 @@ def max_square(space, size):
             x = it.multi_index[0]
             y = it.multi_index[1]
             values[x,y] = space[sorted(list(range(y, y + size)) * size), list(range(x, x + size)) * size].sum()
-    return np.unravel_index(values.argmax(), values.shape)[::-1]
+    return values
 
 def part2(input):
     return
@@ -34,5 +38,5 @@ if __name__ == '__main__':
     DAY = 11
     input = inp.read(DAY)
     print(part1(input))
-    # print(part2(input))
+    print(part2(input))
     # print(part1('42'))
