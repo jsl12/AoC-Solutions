@@ -6,3 +6,6 @@ from . import day5
 from . import day6
 # from . import day7
 from . import day8
+from . import day9
+from . import day10
+from . import day11
