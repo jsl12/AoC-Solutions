@@ -6,7 +6,7 @@ def part2(input):
 
 if __name__ == '__main__':
     import input as inp
-    DAY = 9
+    DAY = 11
     input = inp.read(DAY)
     print(part1(input))
     # print(part2(input))
