@@ -3,8 +3,10 @@ import numpy as np
 def part1(input):
     serial_num = int(input)
     space = np.empty((300,300), dtype=np.int32)
-    values = np.empty((space.shape[0]-3, space.shape[1]-3), dtype=np.int32)
+    assign_power(space, serial_num)
+    return max_square(space, 3)
 
+def assign_power(space, serial_num):
     with np.nditer(space, flags=['multi_index'], op_flags=['readwrite']) as it:
         for cell in it:
             x = it.multi_index[0]
@@ -15,12 +17,13 @@ def part1(input):
             power = int(power / 100) % 10
             space[x,y] = power - 5
 
-    with np.nditer(space[:-3, :-3], flags=['multi_index'], op_flags=['readwrite']) as it:
+def max_square(space, size):
+    values = np.empty((space.shape[0] - size, space.shape[1] - size), dtype=np.int32)
+    with np.nditer(space[:-size, :-size], flags=['multi_index'], op_flags=['readwrite']) as it:
         for cell in it:
             x = it.multi_index[0]
             y = it.multi_index[1]
-            values[x,y] = space[sorted(list(range(y, y + 3)) * 3), list(range(x, x + 3)) * 3].sum()
-
+            values[x,y] = space[sorted(list(range(y, y + size)) * size), list(range(x, x + size)) * size].sum()
     return np.unravel_index(values.argmax(), values.shape)[::-1]
 
 def part2(input):
