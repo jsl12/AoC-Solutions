@@ -61,7 +61,13 @@ def part1(input):
     return g.play()
 
 def part2(input):
-    return
+    g = Game(input)
+    g.play()
+    winner = g.scores.argmin()
+    g.last_marble *= 100
+    g._circle = np.concatenate([g._circle, np.zeros(g.last_marble - g._circle.size, dtype=np.int32)], axis=None)
+    g.play()
+    return g.scores[winner]
 
 if __name__ == '__main__':
     import input as inp
