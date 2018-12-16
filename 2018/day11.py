@@ -31,6 +31,14 @@ def max_square(space, size):
     return values
 
 def part2(input):
+    serial_num = int(input)
+    space = np.empty((300, 300), dtype=np.int8)
+    assign_power(space, serial_num)
+
+    max_powers = np.arange(1, 300)
+    with np.nditer(max_powers, flags=['f_index'], op_flags=['readwrite']) as it:
+        for p in it:
+            max_powers[it.index] = max_square(space, max_powers[it.index]).max()
     return
 
 if __name__ == '__main__':
