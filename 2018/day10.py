@@ -108,7 +108,15 @@ def part1(input):
     return
 
 def part2(input):
-    return
+    dfp = make_dfs(input)
+
+    prev_bb = 0
+    for i, col in dfp['x'].iteritems():
+        bb = bounding_box(col, dfp['y'][i])
+        if bb > prev_bb and prev_bb != 0:
+            break
+        prev_bb = bb
+    return i
 
 if __name__ == '__main__':
     import input as inp
