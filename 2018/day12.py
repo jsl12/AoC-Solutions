@@ -1,4 +1,3 @@
-import numpy as np
 import re
 
 class Garden:
@@ -10,22 +9,39 @@ class Garden:
 
     def __init__(self, input):
         self.state = self.STATE_REGEX.search(input).group(1)
-        self.regex = {
-            re.compile('(?=({}))'.format(m[0].replace('.', '\.'))): m[1]
-            for m in self.INPUT_REGEX.findall(input)}
+        self.zero = 0
+        self.extend()
+        self.rules = {m[0]: m[1] for m in self.INPUT_REGEX.findall(input)}
 
     def grow(self, n):
         for i in range(n):
-            for reg in self.regex:
-                for m in re.finditer(reg, self.state):
-                    start = m.span(1)[0]
-                    self.state =  self.state[:start+2] + self.regex[reg] + self.state[start+3:]
-                    continue
+            self.extend()
+            res = self.state[:2]
+            for i in range(len(self.state)-5):
+                block = self.state[i:i+5]
+                res += self.rules[block]
+            self.state = res
+
+    def replace(self, n, c):
+        if self.state[n] != c:
+            self.state = self.state[:n] + c + self.state[n+1:]
+
+    def extend(self, n=5):
+        ext = '.' * n
+        if self.state[:n] != ext:
+            self.state = ext + self.state
+            self.zero += n
+        if self.state[-n:] != ext:
+            self.state += ext
+
+    @property
+    def plant_count(self):
+        return sum([i - self.zero for i, c in enumerate(self.state) if c != '.'])
 
 def part1(input):
     g = Garden(input)
     g.grow(20)
-    return
+    return g.plant_count
 
 def part2(input):
     return
@@ -34,22 +50,5 @@ if __name__ == '__main__':
     import input as inp
     DAY = 12
     input = inp.read(DAY)
-#     input = '''initial state: #..#.#..##......###...###
-#
-# ...## => #
-# ..#.. => #
-# .#... => #
-# .#.#. => #
-# .#.## => #
-# .##.. => #
-# .#### => #
-# #.#.# => #
-# #.### => #
-# ##.#. => #
-# ##.## => #
-# ###.. => #
-# ###.# => #
-# ####. => #
-#     '''
     print(part1(input))
     # print(part2(input))
