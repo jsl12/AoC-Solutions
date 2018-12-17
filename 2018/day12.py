@@ -1,4 +1,6 @@
 import re
+import pandas as pd
+import matplotlib.pyplot
 
 class Garden:
     INPUT_REGEX = re.compile('([\.#]{5}) => ([\.#])')
@@ -6,6 +8,9 @@ class Garden:
 
     def __repr__(self):
         return self.state
+
+    def __str__(self):
+        return '\n'.join(['{} ({}) {}'.format(i, pc, s) for i, (z, pc, s) in enumerate(self.history)])
 
     def __init__(self, input):
         self.state = self.STATE_REGEX.search(input).group(1)
@@ -43,10 +48,6 @@ class Garden:
     @property
     def plant_count(self):
         return sum([i - self.zero for i, c in enumerate(self.state) if c != '.'])
-
-    def print(self):
-        for i, (z, pc, s) in enumerate(self.history):
-            print('{} ({}) {}'.format(i, pc, s))
 
 def part1(input):
     g = Garden(input)
