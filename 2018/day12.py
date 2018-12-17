@@ -10,8 +10,10 @@ class Garden:
     def __init__(self, input):
         self.state = self.STATE_REGEX.search(input).group(1)
         self.zero = 0
-        self.extend()
+        self.extend(10)
         self.rules = {m[0]: m[1] for m in self.INPUT_REGEX.findall(input)}
+        self.history = []
+        self.record()
 
     def grow(self, n):
         for i in range(n):
@@ -21,6 +23,7 @@ class Garden:
                 block = self.state[i:i+5]
                 res += self.rules[block]
             self.state = res
+            self.record()
 
     def replace(self, n, c):
         if self.state[n] != c:
@@ -33,6 +36,9 @@ class Garden:
             self.zero += n
         if self.state[-n:] != ext:
             self.state += ext
+
+    def record(self):
+        self.history.append((self.zero, self.state))
 
     @property
     def plant_count(self):
