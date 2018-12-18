@@ -6,25 +6,17 @@ def parse(line):
     match = REGEX.match(line)
     return match.group(2), match.group(1)
 
-def find_ready(dependencies, completed):
-    ready = sorted([key for key in dependencies if all([c in completed for c in dependencies[key]])])
-    new_ready = [c for c in ready if c not in completed]
-    return new_ready
+class Step:
+    def __repr__(self):
+        return '{} -> {}'.format(self.pre_step, self.step)
+
+    def __init__(self, pre_step, step):
+        self.pre_step = pre_step
+        self.step = step
 
 def part1(input):
-    input = sorted([parse(line) for line in input.splitlines()])
-    dependencies = {}
-    for i in range(ord('A'), ord('Z')):
-        dependencies[chr(i)] = [inp[1] for inp in input if inp[0] == chr(i)]
-
-    completed = []
-    def proc(dependencies, completed):
-        ready = find_ready(dependencies, completed)
-        if ready:
-            completed.extend(ready)
-            proc(dependencies, completed)
-    proc(dependencies, completed)
-    return ''.join(completed)
+    input = [Step(*parse(line)) for line in input.splitlines()]
+    return
 
 def part2(input):
     return
