@@ -31,11 +31,31 @@ def create_steps(input):
             steps[i[1]].append(i[0])
         else:
             steps[i[1]] = [i[0]]
-    return [Step(s, steps[s]) for s in steps]
+    return steps
+
+def start(steps):
+    s = next(iter(steps.keys()))
+    while s in steps:
+        s = steps[s][0]
+    return s
 
 def part1(input):
     steps = create_steps(input)
-    return
+    done = list(start(steps))
+
+    keys = iter(steps.keys())
+    s = next(keys)
+    remaining = steps.copy()
+    while len(done) < len(steps):
+        if all([i in done for i in steps[s]]):
+            done.append(s)
+            remaining.pop(s)
+        try:
+            s = next(keys)
+        except StopIteration as e:
+            keys = iter(list(remaining.keys()))
+            s = next(keys)
+    return ''.join(done)
 
 def part2(input):
     return
