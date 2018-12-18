@@ -57,6 +57,11 @@ def part1(input):
     valid_counts = [counts[i] for i in filter_borders(space, input)]
     return max(valid_counts)
 
+def part2(input):
+    input = [parse(line) for line in input.splitlines()]
+    space = scan_space(create_space(input), input)
+    return
+
 def visualize(space, file):
     with open(file, 'w') as f:
         for row in space:
