@@ -20,15 +20,13 @@ def distance(coord, capital):
     return x + y
 
 def scan_space(space, input):
-    it = np.nditer(space, flags=['multi_index'], op_flags=['readwrite'], order='F')
-    with it:
-        while not it.finished:
+    with np.nditer(space, flags=['multi_index'], op_flags=['readwrite'], order='F') as it:
+        for cell in it:
             d = np.array([distance(it.multi_index, capital) for capital in input])
             if d[d == d.min()].size == 1:
                 space[it.multi_index] = d.argmin()
             else:
                 space[it.multi_index] = -1
-            it.iternext()
     return space
 
 def get_counts(space, inputs):
@@ -47,8 +45,6 @@ def filter_borders(space, inputs):
             res.update([row[0], row[-1]])
     filtered = [i for i in range(len(inputs))]
     [filtered.pop(i) for i in sorted(res)[-1:0:-1]]
-    # for i in sorted(res)[-1:0:-1]:
-    #     filtered.pop(i)
     return filtered
 
 def part1(input):
@@ -74,9 +70,6 @@ def visualize_capitals(input, file):
     with open(file, 'w') as f:
         for line in space:
             f.write(''.join(line.tolist())+'\n')
-
-def part2(input):
-    return
 
 if __name__ == '__main__':
     import input as inp
