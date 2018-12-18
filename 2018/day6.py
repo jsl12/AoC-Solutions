@@ -23,8 +23,8 @@ def scan_space(space, input):
     it = np.nditer(space, flags=['multi_index'], op_flags=['readwrite'], order='F')
     with it:
         while not it.finished:
-            d = np.array([distance(it.multi_index, cap) for cap in input])
-            if d[d == d[d.argmin()]].size == 1:
+            d = np.array([distance(it.multi_index, capital) for capital in input])
+            if d[d == d.min()].size == 1:
                 space[it.multi_index] = d.argmin()
             else:
                 space[it.multi_index] = -1
@@ -69,8 +69,8 @@ def visualize(space, file):
 
 def visualize_capitals(input, file):
     space = create_space(input, '.')
-    for i, cap in enumerate(input):
-        space[cap] = chr(i + ord('A'))
+    for i, capital in enumerate(input):
+        space[capital] = chr(i + ord('A'))
     with open(file, 'w') as f:
         for line in space:
             f.write(''.join(line.tolist())+'\n')
