@@ -19,14 +19,17 @@ def distance(coord, capital):
     y = abs(coord[1] - capital[1])
     return x + y
 
-def scan_space(space, input):
+def scan_space(space, input, type='min'):
     with np.nditer(space, flags=['multi_index'], op_flags=['readwrite'], order='F') as it:
         for cell in it:
             d = np.array([distance(it.multi_index, capital) for capital in input])
-            if d[d == d.min()].size == 1:
-                space[it.multi_index] = d.argmin()
-            else:
-                space[it.multi_index] = -1
+            if type == 'min':
+                if d[d == d.min()].size == 1:
+                    space[it.multi_index] = d.argmin()
+                else:
+                    space[it.multi_index] = -1
+            elif type == 'sum':
+                space[it.multi_index] = d.sum()
     return space
 
 def get_counts(space, inputs):
@@ -59,8 +62,8 @@ def part1(input):
 
 def part2(input):
     input = [parse(line) for line in input.splitlines()]
-    space = scan_space(create_space(input), input)
-    return
+    space = scan_space(create_space(input), input, type='sum')
+    return space[space < 10000].size
 
 def visualize(space, file):
     with open(file, 'w') as f:
@@ -81,7 +84,7 @@ if __name__ == '__main__':
     DAY = 6
     input = inp.read(DAY)
     print(part1(input))
-    # print(part2(input))
+    print(part2(input))
     #
     # sample_input = [
     #     (1, 1),
