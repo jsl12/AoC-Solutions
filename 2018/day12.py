@@ -55,7 +55,7 @@ class Garden:
 
     def fast_forward(self, steps):
         remaining_steps = steps - len(self.history)
-        return self.plant_count + (remaining_steps * self.growth.iloc[-1])
+        return int(self.plant_count + (remaining_steps * self.growth.iloc[-1]))
 
     @property
     def plant_count(self):
@@ -77,8 +77,7 @@ def part1(input):
 def part2(input):
     g = Garden(input)
     g.stabilize()
-    g.fast_forward(50000000000)
-    return
+    return g.fast_forward(50000000000)
 
 if __name__ == '__main__':
     import input as inp
