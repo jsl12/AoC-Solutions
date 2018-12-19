@@ -86,7 +86,5 @@ if __name__ == '__main__':
     import input as inp
     DAY = 7
     input = inp.read(DAY)
-    # with open('day7_sample.txt', 'r') as file:
-    #     input = file.read()
-    # print(part1(input))
+    print(part1(input))
     print(part2(input))
