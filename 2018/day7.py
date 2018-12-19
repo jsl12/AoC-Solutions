@@ -52,6 +52,9 @@ class Manager:
         res = [s for s in self.starts if self.starts[s] <= self.t < self.end_time(s)]
         return len(res)
 
+    def final_time(self):
+        return max([self.end_time(s) for s in self.starts])
+
     def run(self):
         done = self.find_done()
         while len(done) < self.n:
@@ -75,15 +78,15 @@ def part1(input):
     return ''.join(done)
 
 def part2(input):
-    m = Manager(input, workers=2, offset=0)
+    m = Manager(input)
     m.run()
-    return
+    return m.final_time()
 
 if __name__ == '__main__':
     import input as inp
     DAY = 7
     input = inp.read(DAY)
-    with open('day7_sample.txt', 'r') as file:
-        input = file.read()
+    # with open('day7_sample.txt', 'r') as file:
+    #     input = file.read()
     # print(part1(input))
     print(part2(input))
