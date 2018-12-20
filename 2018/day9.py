@@ -26,52 +26,51 @@ class Game:
     def circle(self):
         return self._circle[:self.size]
 
-    def insert(self, position, marble_val):
-        if marble_val % 23 == 0:
-            self.scores[self.player] += marble_val
-            position -= 7
-            self.scores[self.player] += self.circle[position]
-            self.circle[position:-1] = self.circle[position + 1:]
-            self.size -= 1
-        else:
-            self.size += 1
-            if position >= self.size:
-                position = 1
-            self.circle[position+1:] = self.circle[position:-1]
-            self.circle[position] = marble_val
-        return position
+    def play(self):
+        while self.marble <= self.last_marble:
+            self.take_turn()
+        return self.scores.max()
 
     def take_turn(self):
-        self.current_marble = self.insert(self.current_marble+2, self.marble)
+        if self.marble % 23 == 0:
+            self.score()
+        else:
+            self.insert()
         self.marble += 1
         self.player = next(self.players)
 
+    def insert(self):
+        self.size += 1
+        self.current_marble += 2
+        if self.current_marble >= self.size:
+            self.current_marble = 1
+        self.circle[self.current_marble + 1:] = self.circle[self.current_marble:-1]
+        self.circle[self.current_marble] = self.marble
+
+    def score(self):
+        self.scores[self.player] += self.marble
+        self.current_marble -= 7
+        if self.current_marble < 0:
+            self.current_marble += self.size
+        self.scores[self.player] += self.circle[self.current_marble]
+        self.circle[self.current_marble:-1] = self.circle[self.current_marble + 1:]
+        self.size -= 1
+
 def part1(input):
     g = Game(input)
-    # n=10
-    # vals = [0, 8, 4, 9, 2, 5, 1, 6, 3, 7]
-    # g.size = len(vals)
-    # g.circle[:len(vals)] = vals
-    # g.current_marble = 3
-    # g.insert(5, 10)
-    while g.marble <= g.last_marble:
-        g.take_turn()
-    return
+    return g.play()
 
 def part2(input):
-    g = Game(input)
-    g.play()
-    winner = g.scores.argmin()
-    g.last_marble *= 100
-    g._circle = np.concatenate([g._circle, np.zeros(g.last_marble - g._circle.size, dtype=np.int32)], axis=None)
-    g.play()
-    return g.scores[winner]
+    return
 
 if __name__ == '__main__':
     import input as inp
     DAY = 9
     input = inp.read(DAY)
-    # print(part1(input))
+    print(part1(input))
     # print(part2(input))
     # print(part1('10 players; last marble is worth 1618 points'))
-    print(part1('9 players; last marble is worth 7999 points'))
+    # print(part1('13 players; last marble is worth 7999 points'))
+    # print(part1('17 players; last marble is worth 1104 points'))
+    # print(part1('21 players; last marble is worth 6111 points'))
+    # print(part1('30 players; last marble is worth 5807 points'))
