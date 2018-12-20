@@ -1,6 +1,5 @@
 
 *.pyc
-*.txt
 .idea
 .ipynb_checkpoints
 venv
