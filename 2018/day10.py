@@ -20,17 +20,6 @@ def visualize(pos_df, n, type='single', fig=None, ax=None, close=True):
     else:
         return fig, ax
 
-def visualize_set(df, start, n):
-    for i in range(n):
-        fig, ax = plt.subplots(figsize=(19.2,10.8))
-        ax.plot(df['x'][start+i], df['y'][start+i], '.')
-        ax.set_ylim(df['y'][start].min(), df['y'][start].max())
-        ax.set_xlim(df['x'][start].min(), df['x'][start].max())
-        file = 'day10_{}.png'.format(start+i)
-        fig.savefig(file)
-        print('saved to {}'.format(file))
-        plt.close(fig)
-
 def determine_extents(x, y, x_vel, y_vel):
     df = pd.DataFrame({
         'x': x,
@@ -41,8 +30,8 @@ def determine_extents(x, y, x_vel, y_vel):
     x1 = df.min()['x']
     x2 = df[df['x'] < 0]['x'].max()
     x3 = df[df['x'] > 0]['x'].min()
-    start = abs(x1 - x2) / df['x_vel'].max()
-    end = abs(x1 - x3) / df['x_vel'].max()
+    start = int(abs(x1 - x2) / df['x_vel'].max())
+    end = int(abs(x1 - x3) / df['x_vel'].max())
     return start, end
 
 def bounding_box(x, y):
@@ -78,7 +67,7 @@ def make_dfs(input, n=None):
     # construct position over time df
     if n is None:
         n = determine_extents(x, y, x_vel, y_vel)
-    elif isinstance(n, tuple):
+    if isinstance(n, tuple):
         r = np.arange(n[0], n[1], dtype=np.int32)
     elif isinstance(n, int):
         r = np.arange(n, dtype=np.int32)
@@ -103,24 +92,15 @@ def part1(input):
         if bb > prev_bb and prev_bb != 0:
             break
         prev_bb = bb
-    # visualize_set(dfp, i - 5, 10)
     # visualize(dfp, i-1)
-    return
+    return i-1
 
 def part2(input):
-    dfp = make_dfs(input)
-
-    prev_bb = 0
-    for i, col in dfp['x'].iteritems():
-        bb = bounding_box(col, dfp['y'][i])
-        if bb > prev_bb and prev_bb != 0:
-            break
-        prev_bb = bb
-    return i
+    return part1(input)
 
 if __name__ == '__main__':
     import input as inp
     DAY = 10
     input = inp.read(DAY)
     print(part1(input))
-    # print(part2(input))
+    print(part2(input))
