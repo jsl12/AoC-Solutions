@@ -84,4 +84,4 @@ if __name__ == '__main__':
     DAY = 12
     input = inp.read(DAY)
     print(part1(input))
-    # print(part2(input))
+    print(part2(input))
