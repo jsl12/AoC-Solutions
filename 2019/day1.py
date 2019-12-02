@@ -21,8 +21,8 @@ def part2(input):
 
 
 if __name__ == '__main__':
-    import input as inp
+    import aoc_input as inp
 
     DAY = 1
-    print(part1(inp.day_gen(DAY)))
-    print(part2(inp.day_gen(DAY)))
+    print(part1(inp.gen(DAY)))
+    print(part2(inp.gen(DAY)))
