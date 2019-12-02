@@ -11,12 +11,12 @@ def fuel_needed(mass, fuel_total:int = 0):
 
 
 def part1(input):
-    res = sum([floor(int(line) / 3) - 2 for line in input])
+    res = sum([floor(int(line) / 3) - 2 for line in input.splitlines()])
     return res
 
 
 def part2(input):
-    res = sum([fuel_needed(line) for line in input])
+    res = sum([fuel_needed(line) for line in input.splitlines()])
     return res
 
 
@@ -24,5 +24,5 @@ if __name__ == '__main__':
     import aoc_input as inp
 
     DAY = 1
-    print(part1(inp.gen(DAY)))
-    print(part2(inp.gen(DAY)))
+    print(part1(inp.read(DAY)))
+    print(part2(inp.read(DAY)))
