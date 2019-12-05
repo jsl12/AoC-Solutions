@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import pandas as pd
 
 class Wire:
@@ -27,6 +26,10 @@ class Wire:
                 data=[0] + [w.end[0] for w in self.segments]
             )
         )
+
+    def closest_intersection(self, other_wire):
+        distances = [seg.check_wire(other_wire) for seg in self.segments]
+        return min([d for d in distances if d is not None])
 
 
 class Segment:
@@ -68,11 +71,12 @@ class Segment:
         else:
             segments_to_check = wire.vertical_segments
 
-        for seg in segments_to_check:
-            if self.check_segment(seg):
-                return True
 
-        return False
+        intersections = [self.check_segment(seg) for seg in segments_to_check]
+        distances = [abs(cross[0]) + abs(cross[1]) for cross in intersections if cross is not None]
+        if distances:
+            return min(distances)
+
 
     def check_segment(self, seg) -> bool:
         """
@@ -93,25 +97,13 @@ class Segment:
         s = ((y1 - y2)*(x1 - x3) + (x2 - x1)*(y1 - y3)) / denom
 
         if 0 < r < 1 and 0 < s < 1:
-            if self.vertical:
-
-            return True
-        else:
-            return False
+            x_cross = x1 + (x2 - x1) * r
+            y_cross = y1 + (y2 - y1) * r
+            return int(x_cross), int(y_cross)
 
 def part1(input):
     wires = [Wire(line).draw_all() for line in input.splitlines()]
-
-    fig, ax = plt.subplots()
-    for w in wires:
-        ax.plot(w.series)
-    ax.grid(True)
-    fig.savefig('day3.png')
-
-    for wire in wires[1].segments:
-        if wire.check_wire(wires[0]):
-            print(wire)
-    return
+    return wires[0].closest_intersection(wires[1])
 
 
 def part2(input):
@@ -119,7 +111,8 @@ def part2(input):
 
 
 if __name__ == '__main__':
+    import aoc_input as inp
     DAY = 3
-    part1('R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83')
-    # print(part1(inp.read(DAY)))
+    print(part1('R75,D30,R83,U83,L12,D49,R71,U7,L72\nU62,R66,U55,R34,D71,R55,D58,R83'))
+    print(part1(inp.read(DAY)))
     # print(part2(inp.read(DAY)))
