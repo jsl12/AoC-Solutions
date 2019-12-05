@@ -1,6 +1,7 @@
 import pandas as pd
 from utils import segment_intersection
 
+
 class Wire:
     def __init__(self, input:str):
         self.input = input
@@ -29,8 +30,16 @@ class Wire:
         )
 
     def closest_intersection(self, other_wire):
-        distances = [seg.check_wire(other_wire) for seg in self.segments]
-        return min([d for d in distances if d is not None])
+        res = [min_dist(seg, other_wire) for seg in self.segments]
+        return min([r for r in res if r is not None])
+
+
+def min_dist(seg, wire):
+    intersections = seg.wire_intersection(wire)
+    try:
+        return min([abs(c[0]) + abs(c[1]) for c in intersections if c])
+    except ValueError:
+        return
 
 
 class Segment:
@@ -58,26 +67,14 @@ class Segment:
     def vertical(self):
         return self.dir == 'U' or self.dir == 'D'
 
-    @property
-    def x(self):
-        return self.start[0], self.end[0]
-
-    @property
-    def y(self):
-        return self.start[1], self.end[1]
-
-    def check_wire(self, wire: Wire):
+    def wire_intersection(self, wire: Wire):
         if self.vertical:
             segments_to_check = wire.horizontal_segments
         else:
             segments_to_check = wire.vertical_segments
 
-
         intersections = [self.check_segment(seg) for seg in segments_to_check]
-        distances = [abs(cross[0]) + abs(cross[1]) for cross in intersections if cross is not None]
-        if distances:
-            return min(distances)
-
+        return [cross for cross in intersections if cross is not None]
 
     def check_segment(self, seg):
         return segment_intersection(
@@ -90,6 +87,7 @@ class Segment:
             x4 = seg.end[0],
             y4 = seg.end[1],
         )
+
 
 def part1(input):
     wires = [Wire(line).draw_all() for line in input.splitlines()]
