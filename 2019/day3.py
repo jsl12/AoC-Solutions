@@ -65,7 +65,7 @@ class Segment:
     def y(self):
         return self.start[1], self.end[1]
 
-    def check_wire(self, wire: Wire) -> bool:
+    def check_wire(self, wire: Wire):
         if self.vertical:
             segments_to_check = wire.horizontal_segments
         else:
@@ -78,7 +78,7 @@ class Segment:
             return min(distances)
 
 
-    def check_segment(self, seg) -> bool:
+    def check_segment(self, seg):
         """
         http://www.cs.swan.ac.uk/~cssimon/line_intersection.html
         """
