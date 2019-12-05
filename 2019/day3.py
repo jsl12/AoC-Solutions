@@ -1,4 +1,5 @@
 import pandas as pd
+from utils import segment_intersection
 
 class Wire:
     def __init__(self, input:str):
@@ -79,27 +80,16 @@ class Segment:
 
 
     def check_segment(self, seg):
-        """
-        http://www.cs.swan.ac.uk/~cssimon/line_intersection.html
-        """
-        x1 = self.start[0]
-        y1 = self.start[1]
-        x2 = self.end[0]
-        y2 = self.end[1]
-
-        x3 = seg.start[0]
-        y3 = seg.start[1]
-        x4 = seg.end[0]
-        y4 = seg.end[1]
-
-        denom = (x4 - x3) * (y1 - y2) - (x1 - x2) * (y4 - y3)
-        r = ((y3 - y4)*(x1 - x3) + (x4 - x3)*(y1 - y3)) / denom
-        s = ((y1 - y2)*(x1 - x3) + (x2 - x1)*(y1 - y3)) / denom
-
-        if 0 < r < 1 and 0 < s < 1:
-            x_cross = x1 + (x2 - x1) * r
-            y_cross = y1 + (y2 - y1) * r
-            return int(x_cross), int(y_cross)
+        return segment_intersection(
+            x1=self.start[0],
+            y1=self.start[1],
+            x2 = self.end[0],
+            y2 = self.end[1],
+            x3 = seg.start[0],
+            y3 = seg.start[1],
+            x4 = seg.end[0],
+            y4 = seg.end[1],
+        )
 
 def part1(input):
     wires = [Wire(line).draw_all() for line in input.splitlines()]
