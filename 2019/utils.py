@@ -7,4 +7,4 @@ def segment_intersection(x1, y1, x2, y2, x3, y3, x4, y4):
     if 0 < r < 1 and 0 < s < 1:
         x_cross = x1 + (x2 - x1) * r
         y_cross = y1 + (y2 - y1) * r
-        return int(x_cross), int(y_cross)
+        return round(x_cross), round(y_cross)
