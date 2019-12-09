@@ -23,17 +23,28 @@ def rule2_check(input, count_threshold = 2):
             pass
     return max_count >= count_threshold
 
+def rule3_check(input):
+    input += '..'
+    for i, c in enumerate(input):
+        if i < len(input) - 2:
+            if (input[i-1] != c) and (input[i+1] == c) and (input[i+2] != c):
+                return True
+        else:
+            return False
+
 def part1(input):
     limits = [line for line in input.split('-')]
     res = [i for i in range(int(limits[0]), int(limits[1])) if rule1_check(str(i)) and rule2_check(str(i), 2)]
     return len(res)
 
 def part2(input):
-    return
+    limits = [line for line in input.split('-')]
+    res = [i for i in range(int(limits[0]), int(limits[1])) if rule1_check(str(i)) and rule3_check(str(i))]
+    return len(res)
 
 if __name__ == '__main__':
     import aoc_input as inp
 
     DAY = 4
     print(part1(inp.read(DAY)))
-    # print(part2(inp.read(DAY)))
+    print(part2(inp.read(DAY)))
