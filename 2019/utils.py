@@ -11,10 +11,12 @@ def segment_intersection(x1, y1, x2, y2, x3, y3, x4, y4):
 
 
 class IntcodeComputer:
-    def __init__(self, input_str):
+    def __init__(self, input_str, inputs=None):
         self.seq = [int(i) for i in input_str.split(',')]
         self.ORIGINAL_SEQ = self.seq[:]
         self.pos = 0
+        if inputs is not None:
+            self.inputs = inputs
         self.outputs = []
 
     def __str__(self):
@@ -37,6 +39,72 @@ class IntcodeComputer:
         return res
 
     def run(self):
+        """
+        Run the Intcode program until completion
+
+        :return:
+
+        >>> ic = IntcodeComputer('1,0,0,0,99')
+        >>> ic.run()
+        >>> ic.seq
+        [2, 0, 0, 0, 99]
+        >>> ic = IntcodeComputer('2,3,0,3,99')
+        >>> ic.run()
+        >>> ic.seq
+        [2, 3, 0, 6, 99]
+        >>> ic = IntcodeComputer('2,4,4,5,99,0')
+        >>> ic.run()
+        >>> ic.seq
+        [2, 4, 4, 5, 99, 9801]
+        >>> ic = IntcodeComputer('1,1,1,4,99,5,6,0,99')
+        >>> ic.run()
+        >>> ic.seq
+        [30, 1, 1, 4, 2, 5, 6, 0, 99]
+        >>> ic = IntcodeComputer('1002,4,3,4,33')
+        >>> ic.run()
+        >>> ic.seq
+        [1002, 4, 3, 4, 99]
+        >>> ic = IntcodeComputer('3,9,8,9,10,9,4,9,99,-1,8', [8])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        1
+        >>> ic = IntcodeComputer('3,9,8,9,10,9,4,9,99,-1,8', [7])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        0
+        >>> ic = IntcodeComputer('3,9,7,9,10,9,4,9,99,-1,8', [7])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        1
+        >>> ic = IntcodeComputer('3,9,7,9,10,9,4,9,99,-1,8', [8])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        0
+        >>> ic = IntcodeComputer('3,3,1108,-1,8,3,4,3,99', [8])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        1
+        >>> ic = IntcodeComputer('3,3,1108,-1,8,3,4,3,99', [7])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        0
+        >>> ic = IntcodeComputer('3,3,1107,-1,8,3,4,3,99', [7])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        1
+        >>> ic = IntcodeComputer('3,3,1107,-1,8,3,4,3,99', [8])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        0
+        >>> ic = IntcodeComputer('3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9', [7])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        1
+        >>> ic = IntcodeComputer('3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9', [0])
+        >>> ic.run()
+        >>> ic.outputs[0]
+        0
+        """
         while self.seq[self.pos] != 99:
             self.operate()
 
@@ -78,6 +146,15 @@ class IntcodeComputer:
             self.pos += len(params) + 1
 
     def get_params(self):
+        """
+        Resolves the actual values needed for the operation
+
+        :return: [op, value1, value2, ..., placeholder]
+
+        >>> ic = IntcodeComputer('1002,4,3,4,33')
+        >>> ic.get_params()
+        [2, 33, 3, 0]
+        """
         params = self.get_modes(self.seq[self.pos])
         # last one is usually position, so it doesn't need to be resolved
         for i, m in enumerate(params[1:-1]):
@@ -92,6 +169,19 @@ class IntcodeComputer:
         return params
 
     def get_modes(self, input):
+        """
+        Get the modes of the parameters - positional (0) or immediate (1)
+
+        :param input: str
+        :return: [op, mode1, mode2, ...]
+
+        >>> ic = IntcodeComputer('1,0,0,0,99')
+        >>> ic.get_modes(ic.seq[ic.pos])
+        [1, 0, 0, 0]
+        >>> ic = IntcodeComputer('1002,4,3,4,33')
+        >>> ic.get_modes(ic.seq[ic.pos])
+        [2, 0, 1, 0]
+        """
         opcode = f'{int(input):0>5d}'
         op = int(opcode[-2:])
 
@@ -132,3 +222,7 @@ class IntcodeComputer:
             if self.seq[0] == target_val:
                 break
         return noun, verb
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
