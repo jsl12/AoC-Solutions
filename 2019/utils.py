@@ -1,3 +1,5 @@
+import operator
+
 def segment_intersection(x1, y1, x2, y2, x3, y3, x4, y4):
     # http: // www.cs.swan.ac.uk / ~cssimon / line_intersection.html
     denom = (x4 - x3) * (y1 - y2) - (x1 - x2) * (y4 - y3)
@@ -11,6 +13,8 @@ def segment_intersection(x1, y1, x2, y2, x3, y3, x4, y4):
 
 
 class IntcodeComputer:
+
+
     def __init__(self, input_str, inputs=None):
         self.seq = [int(i) for i in input_str.split(',')]
         self.ORIGINAL_SEQ = self.seq[:]
@@ -18,6 +22,16 @@ class IntcodeComputer:
         if inputs is not None:
             self.inputs = inputs
         self.outputs = []
+        self.op_funcs = {
+            1: (operator.add, 3),
+            2: (operator.mul, 3),
+            3: (self.input, 1),
+            4: (self.output, 1),
+            5: (self.jump_true, 2),
+            6: (self.jump_false, 2),
+            7: (operator.lt, 3),
+            8: (operator.eq, 3)
+        }
 
     def __str__(self):
         return str(self.seq)
@@ -25,18 +39,60 @@ class IntcodeComputer:
     def reset(self):
         self.seq = self.ORIGINAL_SEQ[:]
         self.pos = 0
+        self.outputs = []
 
-    def op_codes(self):
-        res = []
-        self.pos = 0
-        while self.pos < len(self.seq):
-            val = int(str(self.seq[self.pos])[-2:])
-            res.append(val)
-            if val == 1 or val == 2:
-                self.pos += 4
-            elif val == 3 or val == 4:
-                self.pos += 2
-        return res
+    @property
+    def full_opcode(self):
+        return f'{self.seq[self.pos]:0>5d}'
+
+    @property
+    def op(self):
+        return int(self.full_opcode[-2:])
+
+    @property
+    def modes(self):
+        return [int(i) for i in self.full_opcode[:-2]][::-1]
+
+    @property
+    def resolved_params(self):
+        """
+        >>> ic = IntcodeComputer('1,0,0,0,99')
+        >>> ic.resolved_params
+        [1, 1, 1]
+        >>> ic = IntcodeComputer('2,3,0,3,99')
+        >>> ic.resolved_params
+        [3, 2, 3]
+        """
+        modes = self.modes
+        op_num = self.op
+        num_params = self.op_funcs[op_num][1]
+        raw_params = [self.seq[self.pos + i + 1] for i in range(num_params)]
+        resolved_params = [self.seq[p] if modes[i] == 0 else p for i, p in enumerate(raw_params)]
+
+        if op_num == 4:
+            resolved_params.append('pad')
+        return resolved_params
+
+    def input(self):
+        return self.inputs.pop(0)
+
+    def output(self, value):
+        return value
+
+    def jump_true(self, value):
+        return value != 0
+
+    def jump_false(self, value):
+        return value == 0
+
+    def advance(self):
+        num = self.op_funcs[self.op][1] + 1
+        self.pos += num
+
+    def rerun(self, new_input):
+        self.reset()
+        self.inputs = new_input
+        return self.run()
 
     def run(self):
         """
@@ -64,143 +120,75 @@ class IntcodeComputer:
         >>> ic.run()
         >>> ic.seq
         [1002, 4, 3, 4, 99]
+
         >>> ic = IntcodeComputer('3,9,8,9,10,9,4,9,99,-1,8', [8])
         >>> ic.run()
-        >>> ic.outputs[0]
         1
-        >>> ic = IntcodeComputer('3,9,8,9,10,9,4,9,99,-1,8', [7])
-        >>> ic.run()
-        >>> ic.outputs[0]
+        >>> ic.rerun([7])
         0
+
         >>> ic = IntcodeComputer('3,9,7,9,10,9,4,9,99,-1,8', [7])
         >>> ic.run()
-        >>> ic.outputs[0]
         1
-        >>> ic = IntcodeComputer('3,9,7,9,10,9,4,9,99,-1,8', [8])
-        >>> ic.run()
-        >>> ic.outputs[0]
+        >>> ic.rerun([8])
         0
+
+
         >>> ic = IntcodeComputer('3,3,1108,-1,8,3,4,3,99', [8])
         >>> ic.run()
-        >>> ic.outputs[0]
         1
-        >>> ic = IntcodeComputer('3,3,1108,-1,8,3,4,3,99', [7])
-        >>> ic.run()
-        >>> ic.outputs[0]
+        >>> ic.rerun([7])
         0
+
         >>> ic = IntcodeComputer('3,3,1107,-1,8,3,4,3,99', [7])
         >>> ic.run()
-        >>> ic.outputs[0]
         1
-        >>> ic = IntcodeComputer('3,3,1107,-1,8,3,4,3,99', [8])
-        >>> ic.run()
-        >>> ic.outputs[0]
+        >>> ic.rerun([8])
         0
+
         >>> ic = IntcodeComputer('3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9', [7])
         >>> ic.run()
-        >>> ic.outputs[0]
         1
-        >>> ic = IntcodeComputer('3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9', [0])
-        >>> ic.run()
-        >>> ic.outputs[0]
+        >>> ic.rerun([0])
         0
+
+        >>> ic = IntcodeComputer('3,3,1105,-1,9,1101,0,0,12,4,12,99,1', [7])
+        >>> ic.run()
+        1
+        >>> ic.rerun([0])
+        0
+
+        # >>> ic = IntcodeComputer(
+        # ...     '3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99',
+        # ...     [7])
+        # >>> ic.run()
+        # >>> ic.outputs[0]
+        # 999
         """
-        while self.seq[self.pos] != 99:
+        while self.op != 99:
             self.operate()
+        if self.outputs:
+            return self.outputs.pop(0)
 
     def operate(self):
-        params = self.get_params()
-        op = params.pop(0)
-        params[-1] = self.seq[self.pos+len(params)]
-
+        op_num = self.op
+        params = self.resolved_params
+        func, num_params = self.op_funcs[op_num]
+        res = int(func(*params[:-1]))
         jumped = False
-        if op == 1:
-            self.seq[params[2]] = params[0] + params[1]
-        elif op == 2:
-            self.seq[params[2]] = params[0] * params[1]
-        elif op == 3:
-            self.seq[params[0]] = self.inputs.pop()
-        elif op == 4:
-            self.outputs.append(self.seq[params[0]])
-            pass
-        elif op == 5:
-            if params[0] != 0:
-                self.pos = params[1]
-                jumped = True
-        elif op == 6:
-            if params[0] == 0:
-                self.pos = params[1]
-                jumped = True
-        elif op == 7:
-            if params[0] < params[1]:
-                self.seq[params[2]] = 1
-            else:
-                self.seq[params[2]] = 0
-        elif op == 8:
-            if params[0] == params[1]:
-                self.seq[params[2]] = 1
-            else:
-                self.seq[params[2]] = 0
 
+        if op_num in [1, 2, 7, 8]:
+            self.seq[self.seq[self.pos + 3]] = res
+        elif op_num == 3:
+            self.seq[self.seq[self.pos + 1]] = res
+        elif op_num == 4:
+            self.outputs.append(res)
+        elif op_num in [5, 6]:
+            if res == 1:
+                self.pos = params[-1]
+                jumped = True
         if not jumped:
-            self.pos += len(params) + 1
-
-    def get_params(self):
-        """
-        Resolves the actual values needed for the operation
-
-        :return: [op, value1, value2, ..., placeholder]
-
-        >>> ic = IntcodeComputer('1002,4,3,4,33')
-        >>> ic.get_params()
-        [2, 33, 3, 0]
-        """
-        params = self.get_modes(self.seq[self.pos])
-        # last one is usually position, so it doesn't need to be resolved
-        for i, m in enumerate(params[1:-1]):
-            param_loc = self.pos + i + 1
-            if m == 0:
-                param = self.seq[self.seq[param_loc]]
-            elif m == 1:
-                param = self.seq[param_loc]
-            else:
-                raise ValueError(f'invalid mode: {m}')
-            params[i+1] = param
-        return params
-
-    def get_modes(self, input):
-        """
-        Get the modes of the parameters - positional (0) or immediate (1)
-
-        :param input: str
-        :return: [op, mode1, mode2, ...]
-
-        >>> ic = IntcodeComputer('1,0,0,0,99')
-        >>> ic.get_modes(ic.seq[ic.pos])
-        [1, 0, 0, 0]
-        >>> ic = IntcodeComputer('1002,4,3,4,33')
-        >>> ic.get_modes(ic.seq[ic.pos])
-        [2, 0, 1, 0]
-        """
-        opcode = f'{int(input):0>5d}'
-        op = int(opcode[-2:])
-
-        param_table = {
-            1: 3,
-            2: 3,
-            3: 1,
-            4: 1,
-            5: 2,
-            6: 2,
-            7: 3,
-            8: 3
-        }
-        try:
-            modes = [op] + [int(c) for c in opcode[:-2][:param_table[op]][::-1]]
-        except KeyError as e:
-            print(f'Invalid operation: {self.seq}')
-            raise
-        return modes
+            self.advance()
 
 
 if __name__ == '__main__':
