@@ -45,6 +45,7 @@ class IntcodeComputer:
         op = params.pop(0)
         params[-1] = self.seq[self.pos+len(params)]
 
+        jumped = False
         if op == 1:
             self.seq[params[2]] = params[0] + params[1]
         elif op == 2:
@@ -53,7 +54,28 @@ class IntcodeComputer:
             self.seq[params[0]] = self.inputs.pop()
         elif op == 4:
             self.outputs.append(self.seq[params[0]])
-        self.pos += len(params) + 1
+            pass
+        elif op == 5:
+            if params[0] != 0:
+                self.pos = params[1]
+                jumped = True
+        elif op == 6:
+            if params[0] == 0:
+                self.pos = params[1]
+                jumped = True
+        elif op == 7:
+            if params[0] < params[1]:
+                self.seq[params[2]] = 1
+            else:
+                self.seq[params[2]] = 0
+        elif op == 8:
+            if params[0] == params[1]:
+                self.seq[params[2]] = 1
+            else:
+                self.seq[params[2]] = 0
+
+        if not jumped:
+            self.pos += len(params) + 1
 
     def get_params(self):
         params = self.get_modes(self.seq[self.pos])
@@ -78,6 +100,10 @@ class IntcodeComputer:
             2: 3,
             3: 1,
             4: 1,
+            5: 2,
+            6: 2,
+            7: 3,
+            8: 3
         }
         try:
             modes = [op] + [int(c) for c in opcode[:-2][:param_table[op]][::-1]]
