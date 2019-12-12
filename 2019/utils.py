@@ -40,7 +40,7 @@ class IntcodeComputer:
 
     def run(self):
         """
-        Run the Intcode program until completion
+        Run the Intcode program until completion (opcode 99)
 
         :return:
 
@@ -202,26 +202,6 @@ class IntcodeComputer:
             raise
         return modes
 
-    def noun_verb(self, noun, verb):
-        self.seq[1] = noun
-        self.seq[2] = verb
-        while True:
-            if self.seq[self.pos] == 99:
-                break
-            self.operate()
-
-        return self.seq[0]
-
-    def scan(self, target_val):
-        for noun in range(99):
-            for verb in range(99):
-                self.reset()
-                self.noun_verb(noun, verb)
-                if self.seq[0] == target_val:
-                    break
-            if self.seq[0] == target_val:
-                break
-        return noun, verb
 
 if __name__ == '__main__':
     import doctest

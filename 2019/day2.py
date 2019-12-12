@@ -1,33 +1,37 @@
 from utils import IntcodeComputer
 
 def part1(input):
-    os = IntcodeComputer(input)
-    os.noun_verb(noun=12, verb=2)
-    return os.seq[0]
+    """
+    >>> import aoc_input as inp; part1(inp.read(2))
+    4138687
+    """
+    ic = IntcodeComputer(input)
+    ic.seq[1] = 12
+    ic.seq[2] = 2
+    ic.run()
+    return ic.seq[0]
 
 
 def part2(input):
-    os = IntcodeComputer(input)
+    """
+    >>> import aoc_input as inp; part2(inp.read(2))
+    6635
+    """
+    ic = IntcodeComputer(input)
     target_val = 19690720
-    noun, verb = os.scan(target_val)
+    for noun in range(99):
+        for verb in range(99):
+            ic.reset()
+            ic.seq[1] = noun
+            ic.seq[2] = verb
+            ic.run()
+            if ic.seq[0] == target_val:
+                break
+        if ic.seq[0] == target_val:
+            break
     return 100 * noun + verb
 
 
 if __name__ == '__main__':
-    import aoc_input as inp
-
-    DAY = 2
-
-    sample = r'1,1,1,4,99,5,6,0,99'
-    ic = IntcodeComputer(sample)
-    ic.run()
-    assert(r'30,1,1,4,2,5,6,0,99' == ','.join([str(i) for i in ic.seq]))
-    # print(part1(r'2,4,4,5,99,02,4,4,5,99,0'))
-    # ic = IntcodeComputer(inp.read(DAY))
-    # ic.get_modes('1002')
-    # ic.get_modes('11002')
-    # ic.get_modes('00102')
-
-    print(part1(inp.read(DAY)))
-    print(part2(inp.read(DAY)))
-
+    import doctest
+    doctest.testmod()
