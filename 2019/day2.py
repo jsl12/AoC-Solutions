@@ -17,8 +17,17 @@ if __name__ == '__main__':
     import aoc_input as inp
 
     DAY = 2
-    # print(part1(r'1,1,1,4,99,5,6,0,99'))
+
+    sample = r'1,1,1,4,99,5,6,0,99'
+    ic = IntcodeComputer(sample)
+    ic.run()
+    assert(r'30,1,1,4,2,5,6,0,99' == ','.join([str(i) for i in ic.seq]))
     # print(part1(r'2,4,4,5,99,02,4,4,5,99,0'))
+    # ic = IntcodeComputer(inp.read(DAY))
+    # ic.get_modes('1002')
+    # ic.get_modes('11002')
+    # ic.get_modes('00102')
+
     print(part1(inp.read(DAY)))
     print(part2(inp.read(DAY)))
 
