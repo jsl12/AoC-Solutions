@@ -3,13 +3,9 @@ from utils import IntcodeComputer
 
 def part1(input):
     ic = IntcodeComputer(input)
-    # ic.op_codes()
     ic.inputs = [1]
-    while True:
-        if ic.seq[ic.pos] == 99:
-            break
-        ic.operate()
-    return
+    ic.run()
+    return ic.outputs[-1]
 
 def part2(input):
     return
