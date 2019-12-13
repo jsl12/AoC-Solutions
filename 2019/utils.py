@@ -1,4 +1,5 @@
 import operator
+from itertools import permutations
 
 def segment_intersection(x1, y1, x2, y2, x3, y3, x4, y4):
     # http: // www.cs.swan.ac.uk / ~cssimon / line_intersection.html
@@ -12,9 +13,43 @@ def segment_intersection(x1, y1, x2, y2, x3, y3, x4, y4):
         return round(x_cross), round(y_cross)
 
 
+class AmpSystem:
+    def __init__(self, input, len=5):
+        self.amps = [IntcodeComputer(input) for i in range(len)]
+
+    def reset(self):
+        for a in self.amps:
+            a.reset()
+
+    def run(self, settings):
+        """
+        >>> sys = AmpSystem('3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0')
+        >>> sys.run([4,3,2,1,0])
+        43210
+        """
+        self.reset()
+        signal = 0
+        for i, a in enumerate(self.amps):
+            a.inputs = [settings[i], signal]
+            signal = a.run()
+        return signal or 0
+
+    def max_thruster_signal(self):
+        """
+        >>> sys = AmpSystem('3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0')
+        >>> sys.max_thruster_signal()
+        43210
+        >>> sys = AmpSystem('3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0')
+        >>> sys.max_thruster_signal()
+        54321
+        >>> sys = AmpSystem('3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0')
+        >>> sys.max_thruster_signal()
+        65210
+        """
+        return max([self.run(settings) for settings in permutations([i for i in range(len(self.amps))])])
+
+
 class IntcodeComputer:
-
-
     def __init__(self, input_str, inputs=None):
         self.seq = [int(i) for i in input_str.split(',')]
         self.ORIGINAL_SEQ = self.seq[:]
