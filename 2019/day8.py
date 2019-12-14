@@ -22,6 +22,13 @@ class Image:
         counts = self.counts(char)
         return self.layers[counts.index(min(counts))]
 
+    @property
+    def rendered(self):
+        return [[layer.input[i] for layer in self.layers if layer.input[i] != '2'][0] for i in range(len(self.layers[0].input))]
+
+    def __str__(self):
+        return '\n'.join([line for line in textwrap.wrap(''.join(self.rendered), self.dims[1])]).replace('0', ' ')
+
 
 @dataclass
 class Layer:
@@ -37,13 +44,14 @@ def part1(input):
     >>> import aoc_input as inp; part1(inp.read(8))
     1215
     """
-    img = Image(input, (25, 6))
+    img = Image(input, (6, 25))
     layer = img.fewest_layer('0')
     return layer.count('1') * layer.count('2')
 
 
 def part2(input):
-    return
+    img = Image(input, (6, 25))
+    return str(img)
 
 
 if __name__ == '__main__':
