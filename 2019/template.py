@@ -5,6 +5,8 @@ def part2(input):
     return
 
 if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
     import aoc_input as inp
 
     DAY = 1

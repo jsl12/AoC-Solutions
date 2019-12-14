@@ -1,4 +1,4 @@
-from utils import AmpSystem
+from intcode import AmpSystem
 
 
 def part1(input):

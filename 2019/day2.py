@@ -1,11 +1,11 @@
-from utils import IntcodeComputer
+from intcode import Computer
 
 def part1(input):
     """
     >>> import aoc_input as inp; part1(inp.read(2))
     4138687
     """
-    ic = IntcodeComputer(input)
+    ic = Computer(input)
     ic.seq[1] = 12
     ic.seq[2] = 2
     ic.run()
@@ -17,7 +17,7 @@ def part2(input):
     >>> import aoc_input as inp; part2(inp.read(2))
     6635
     """
-    ic = IntcodeComputer(input)
+    ic = Computer(input)
     target_val = 19690720
     for noun in range(99):
         for verb in range(99):

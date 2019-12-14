@@ -1,6 +1,6 @@
 import unittest
 
-from utils import IntcodeComputer, AmpSystem
+from intcode import Computer, AmpSystem
 
 
 class AmpSystemTest(unittest.TestCase):
@@ -59,12 +59,12 @@ class IntcodeComputerTest(unittest.TestCase):
         }
 
         for input, output in cases.items():
-            ic = IntcodeComputer(input)
+            ic = Computer(input)
             ic.run()
             self.assertEqual(str(ic.seq).replace(' ', '')[1:-1], output)
 
     def test_day5(self):
-        ic = IntcodeComputer('1002,4,3,4,33')
+        ic = Computer('1002,4,3,4,33')
         ic.run()
         self.assertEqual(str(ic.seq).replace(' ', '')[1:-1], '1002,4,3,4,99')
 
@@ -98,7 +98,7 @@ class IntcodeComputerTest(unittest.TestCase):
         }
 
         for (input_seq, input_val), output in cases.items():
-            ic = IntcodeComputer(input_seq)
+            ic = Computer(input_seq)
             ic.inputs.append(input_val)
             res = ic.run()
             self.assertEqual(res, output, f'Failed sequence:\n{str(ic.ORIGINAL_SEQ)}\n{str(ic.seq)}\n{res} != {output}')
