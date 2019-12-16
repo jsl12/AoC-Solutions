@@ -56,7 +56,7 @@ DAY7_PART2 = {
 DAY9_PART1 = {
             '109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99': '109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99',
             '1102,34915192,34915192,7,4,7,99,0': 1219070632396864,
-            '104,1125899906842624,99': 1125899906842624
+            '104,1125899906842624,99': 1125899906842624,
         }
 DAY12_PART1 = '<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>'
 
@@ -124,6 +124,21 @@ class IntcodeComputerTest(unittest.TestCase):
             res = ic.run()
             self.assertEqual(res, output, f'Failed sequence:\n{str(ic.ORIGINAL_SEQ)}\n{str(ic.seq)}\n{res} != {output}')
 
+    def test_day9(self):
+        input_seq = list(DAY9_PART1.keys())[0]
+        output = DAY9_PART1.pop(input_seq)
+        ic = Computer(input_seq)
+        ic.run()
+        self.assertEqual(output, ','.join([str(i) for i in ic.outputs]))
+
+        for input_seq, output in DAY9_PART1.items():
+            ic = Computer(input_seq)
+            res = ic.run()
+            self.assertEqual(res, output, f'Failed sequence:\n{str(ic.ORIGINAL_SEQ)}\n{str(ic.seq)}\n{res} != {output}')
+
+        ic = Computer('109,5,203,0,104,0,99', [69])
+        res = ic.run()
+        self.assertEqual(res, 69)
 
 class test_day10(unittest.TestCase):
     def test_samples(self):
