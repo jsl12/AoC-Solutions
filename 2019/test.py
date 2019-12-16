@@ -1,7 +1,7 @@
 import unittest
 
+from day10 import Asteroid, Field
 from intcode import Computer, AmpSystem
-
 
 DAY2 = {
             '1,0,0,0,99': '2,0,0,0,99',
