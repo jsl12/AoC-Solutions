@@ -1,7 +1,9 @@
 import unittest
 
 from day10 import Asteroid, Field
+from day12 import PlanetSystem
 from intcode import Computer, AmpSystem
+
 
 DAY2 = {
             '1,0,0,0,99': '2,0,0,0,99',
@@ -56,6 +58,20 @@ DAY9_PART1 = {
             '1102,34915192,34915192,7,4,7,99,0': 1219070632396864,
             '104,1125899906842624,99': 1125899906842624
         }
+DAY12_PART1 = '<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>'
+
+
+class PlanetTest(unittest.TestCase):
+    def test_gravity(self):
+        ps = PlanetSystem(DAY12_PART1)
+        for i in range(3):
+            ps.simulate_dimension(i, 10)
+        self.assertEqual(ps.total_energy, 179)
+
+    def test_cycle(self):
+        ps = PlanetSystem(DAY12_PART1)
+        total = ps.total_cycle_time()
+        self.assertEqual(total, 2772)
 
 
 class AmpSystemTest(unittest.TestCase):
