@@ -48,6 +48,7 @@ class AmpSystemTest(unittest.TestCase):
             res = sys.max_thruster_signal([i for i in range(5, 10)])
             self.assertEqual(res, signal, f'{input_seq}\n{settings}\n{res} != {signal}')
 
+
 class IntcodeComputerTest(unittest.TestCase):
     def test_day2(self):
         cases = {
@@ -101,6 +102,22 @@ class IntcodeComputerTest(unittest.TestCase):
             ic.inputs.append(input_val)
             res = ic.run()
             self.assertEqual(res, output, f'Failed sequence:\n{str(ic.ORIGINAL_SEQ)}\n{str(ic.seq)}\n{res} != {output}')
+
+
+class test_day10(unittest.TestCase):
+    def test_samples(self):
+        field = '.#..#\n.....\n#####\n....#\n...##'
+        f = Field(field)
+        base, visible_ast_count = f.max_visible()
+        self.assertEqual(visible_ast_count, 8)
+
+    def test_angles(self):
+        base = (1,1)
+        self.assertEqual(Asteroid((0, 2)).angle(*base), 45)
+        self.assertEqual(Asteroid((2, 2)).angle(*base), 135)
+        self.assertEqual(Asteroid((2, 0)).angle(*base), 225)
+        self.assertEqual(Asteroid((0, 0)).angle(*base), 315)
+
 
 if __name__ == '__main__':
     unittest.main()

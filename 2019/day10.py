@@ -1,5 +1,6 @@
 import math
 from dataclasses import dataclass
+from math import atan2, degrees
 from typing import Tuple
 
 import numpy as np
@@ -15,12 +16,13 @@ class Field:
         bool_list = [True if c == '#' else False for c in char_list]
         self.array = np.array(bool_list).reshape((self.width, self.height))
 
-    def scan_all(self):
-        res = [(ast, self.scan_from(*ast.pos)) for ast in self.asteroid_gen()]
-        return max(res, key=lambda r: r[1])
+    def rotating_visible(self, y, x):
+        yield from sorted([(ast, ast.angle(y, x)) for ast in self.visible(y, x)], key=lambda a: a[1])
 
+    def max_visible(self):
+        return max([(ast, len([a for a in self.visible(*ast.pos)])) for ast in self.asteroid_gen()], key=lambda a: a[1])
 
-    def scan_from(self, y, x):
+    def visible(self, y, x):
         """
         Tries to find a direct line of sight back from each asteroid back to the base, which
         is located at the input coordinates and is the location of another asteroid
@@ -29,7 +31,6 @@ class Field:
         :param x: scan start x position
         :return:
         """
-        count = 0
         for ast in self.asteroid_gen():
             dy, dx = ast.get_trajectory(x, y)
             # skip self
@@ -39,26 +40,21 @@ class Field:
                 while self.inbounds(*pos):
                     if pos == (y, x):
                         # reached the base successfully
-                        count += 1
+                        yield ast
                         break
                     elif self.array[pos]:
                         # hit another asteroid on the way back to the base
                         break
                     pos = (pos[0] + dy, pos[1] + dx)
-        return count
 
     def asteroid_gen(self):
-        with self.asteroid_iter as it:
+        with np.nditer(self.array, flags=['multi_index'], op_flags=['readonly']) as it:
             while not it.finished:
                 res = it.multi_index
                 val = it[0]
                 it.iternext()
                 if val:
                     yield Asteroid(res)
-
-    @property
-    def asteroid_iter(self):
-        return np.nditer(self.array, flags=['multi_index'], op_flags=['readonly'])
 
     def inbounds(self, y, x):
         return (0 <= x < self.width) and (0 <= y < self.height)
@@ -92,22 +88,36 @@ class Asteroid:
 
         return int(dy), int(dx)
 
+    def angle(self, y, x):
+        dy = self.y - y
+        dx = self.x - x
+        angle = degrees(atan2(dx, -dy))
+        if angle < 0:
+            angle += 360
+        return angle
+
+
 def part1(input):
     """
     >>> import aoc_input as inp; part1(inp.read(10))
     314
     """
     f = Field(input)
-    return f.scan_all()[1]
+    return f.max_visible()[1]
+
 
 def part2(input):
-    return
+    """
+    >>> import aoc_input as inp; part2(inp.read(10))
+    1513
+    """
+    f = Field(input)
+    base = f.max_visible()[0]
+    visible_ast = [a for a in f.rotating_visible(*base.pos)]
+    y, x = visible_ast[199][0].pos
+    return (x * 100) + y
+
 
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-    import aoc_input as inp
-
-    DAY = 10
-    # print(part1(inp.read(DAY)))
-    print(part2(inp.read(DAY)))
