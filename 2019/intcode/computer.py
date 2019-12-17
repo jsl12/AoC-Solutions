@@ -1,6 +1,10 @@
 import operator
 
 
+class NoInputException(Exception):
+    pass
+
+
 class Computer:
     def __init__(self, input_str, inputs=None):
         self.seq = [int(i) for i in input_str.split(',')]
@@ -62,7 +66,10 @@ class Computer:
         return [int(i) for i in self.full_opcode[:-2]][::-1]
 
     def input(self):
-        return self.inputs.pop(0)
+        try:
+            return self.inputs.pop(0)
+        except IndexError:
+            raise NoInputException
 
     def output(self, value):
         return value

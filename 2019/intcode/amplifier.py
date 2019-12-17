@@ -1,11 +1,11 @@
 from itertools import permutations
 
-from .computer import Computer as IC
+from .computer import Computer, NoInputException
 
 
 class AmpSystem:
     def __init__(self, input, len=5):
-        self.amps = [IC(input) for i in range(len)]
+        self.amps = [Computer(input) for i in range(len)]
 
     def reset(self):
         for a in self.amps:
@@ -34,7 +34,7 @@ class AmpSystem:
                     continue
                 try:
                     a.run()
-                except IndexError:
+                except NoInputException:
                     # hits an index error when it tries to pull an input and there are none available
                     continue
         return self.amps[-1].outputs[0]
