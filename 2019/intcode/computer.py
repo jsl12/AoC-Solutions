@@ -86,7 +86,7 @@ class Computer:
         self.run()
         return self.outputs[0]
 
-    def run(self):
+    def run(self, output_stop=None):
         """
         Run the Intcode program until completion (opcode 99)
 
@@ -94,6 +94,8 @@ class Computer:
         """
         while self.op != 99:
             self.operate()
+            if output_stop is not None and (self.outputs) >= output_stop:
+                break
         if self.outputs:
             return self.outputs[0]
 
