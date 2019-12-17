@@ -33,7 +33,7 @@ class Arcade:
     def tile_gen(self):
         while self.ic.op != 99:
             try:
-                self.ic.run(output_stop=3)
+                self.ic._run_OLD(output_stop=3)
             except NoInputException:
                 self.input(0)
                 continue

@@ -34,7 +34,7 @@ class Robot:
     def step(self):
         current_color = self.painted.get(tuple(self.pos), 0)
         self.brain.inputs.append(current_color)
-        self.brain.run(output_stop=2)
+        self.brain.run(2)
         if self.brain.op != 99:
             new_color = self.brain.outputs.pop(0)
             turn_dir = self.brain.outputs.pop(0)

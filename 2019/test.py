@@ -119,8 +119,7 @@ class IntcodeComputerTest(unittest.TestCase):
         self.assertEqual(str(ic.seq).replace(' ', '')[1:-1], '1002,4,3,4,99')
 
         for (input_seq, input_val), output in DAY5.items():
-            ic = Computer(input_seq)
-            ic.inputs.append(input_val)
+            ic = Computer(input_seq, input_val)
             res = ic.run()
             self.assertEqual(res, output, f'Failed sequence:\n{str(ic.ORIGINAL_SEQ)}\n{str(ic.seq)}\n{res} != {output}')
 
