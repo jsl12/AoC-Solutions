@@ -1,10 +1,12 @@
+import numpy as np
+
 from . import Computer
 
 
 class Robot:
     def __init__(self, input):
         self.brain = Computer(input)
-        self.pos = [0, 0] # [x, y]
+        self.pos = [0, 0] # [y, x]
         self.dir = 0
         self.painted = {}
 
@@ -21,11 +23,11 @@ class Robot:
 
     def move(self):
         if self.dir == 0:
-            self.pos[0] += 1
+            self.pos[0] -= 1
         elif self.dir == 1:
             self.pos[1] += 1
         elif self.dir == 2:
-            self.pos[0] -= 1
+            self.pos[0] += 1
         elif self.dir == 3:
             self.pos[1] -= 1
 
@@ -46,3 +48,23 @@ class Robot:
     def run(self):
         while self.brain.op != 99:
             self.step()
+
+    def visualize(self):
+        x_vals = [val[1] for val in self.painted.keys()]
+        y_vals = [val[0] for val in self.painted.keys()]
+        min_x = min(x_vals)
+        max_x = max(x_vals)
+        min_y = min(y_vals)
+        max_y = max(y_vals)
+
+        transform = (0 - min_y, 0 - min_x)
+        width = max_x - min_x + 1
+        height = max_y - min_y + 1
+
+        array = np.array(['.' for i in range(width*height)]).reshape((height, width))
+        for pos in self.painted:
+            if self.painted[pos] == 1:
+                pos = tuple(sum(x) for x in zip(pos, transform))
+                array[pos] = '#'
+        for row in array:
+            print(''.join(list(row)))

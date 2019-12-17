@@ -94,7 +94,7 @@ class Computer:
         """
         while self.op != 99:
             self.operate()
-            if output_stop is not None and (self.outputs) >= output_stop:
+            if output_stop is not None and len(self.outputs) >= output_stop:
                 break
         if self.outputs:
             return self.outputs[0]
