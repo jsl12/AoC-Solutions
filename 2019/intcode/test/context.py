@@ -6,3 +6,4 @@ con = str(p.parents[2])
 sys.path.insert(0, con)
 
 import intcode
+import aoc_input
