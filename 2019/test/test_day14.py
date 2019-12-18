@@ -2,7 +2,7 @@ import unittest
 
 from day14 import ReactionSystem
 
-DAY14_PART1 = {
+PART1 = {
     '\n'.join([
         '1 ORE => 3 A',
         '1 A => 1 B',
@@ -62,7 +62,7 @@ DAY14_PART1 = {
         '5 BHXH, 4 VRPVC => 5 LTCX',
     ]): 2210736,
 }
-DAY14_PART2 = {
+PART2 = {
     '\n'.join([
         '157 ORE => 5 NZVS',
         '165 ORE => 6 DCFZ',
@@ -110,16 +110,18 @@ DAY14_PART2 = {
 }
 
 
-class TestReactions(unittest.TestCase):
+class TestDay14(unittest.TestCase):
     def test_part1(self):
-        for sys, res in DAY14_PART1.items():
-            rs = ReactionSystem(sys)
-            self.assertEqual(rs.ore_needed('FUEL'), res)
+        for sys, res in PART1.items():
+            with self.subTest():
+                rs = ReactionSystem(sys)
+                self.assertEqual(rs.ore_needed('FUEL'), res)
 
     def test_part2(self):
-        for sys, res in DAY14_PART2.items():
-            rs = ReactionSystem(sys)
-            self.assertEqual(rs.max_fuel(), res)
+        for sys, res in PART2.items():
+            with self.subTest():
+                rs = ReactionSystem(sys)
+                self.assertEqual(rs.max_fuel(), res)
 
 
 if __name__ == '__main__':
