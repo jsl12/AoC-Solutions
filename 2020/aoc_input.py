@@ -12,5 +12,10 @@ def read(day: int):
     with file.open('r') as f:
         yield from f.readlines()
 
+
 def read_nums(day: int):
-    yield from (int(line) for line in read(day))
+    yield from read_factory(day, int)
+
+
+def read_factory(day: int, factory_func):
+    yield from (factory_func(line) for line in read(day))
