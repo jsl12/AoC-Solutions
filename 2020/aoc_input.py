@@ -10,7 +10,7 @@ def find_day(day: int):
 def read(day: int):
     file = find_day(day)
     with file.open('r') as f:
-        yield from f.readlines()
+        return f.readlines()
 
 
 def read_nums(day: int):
