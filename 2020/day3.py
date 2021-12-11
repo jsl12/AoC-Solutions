@@ -59,5 +59,5 @@ def part2(lines):
 
 if __name__ == '__main__':
     DAY = 3
-    print(part1(aoc_input.read(DAY)))
-    print(part2(aoc_input.read(DAY)))
+    print(part1(aoc_input.read_lines(DAY)))
+    print(part2(aoc_input.read_lines(DAY)))

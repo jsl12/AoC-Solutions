@@ -32,5 +32,5 @@ if __name__ == '__main__':
     import aoc_input as inp
     DAY = 2
     part2_check('2-9 c: ccccccccc')
-    print(part1(inp.read(DAY)))
-    print(part2(inp.read(DAY)))
+    print(part1(inp.read_lines(DAY)))
+    print(part2(inp.read_lines(DAY)))

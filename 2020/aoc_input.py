@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def find_day(day: int):
-    base = Path(r'C:\Users\lanca\OneDrive\Documents\Software\Advent of Code\AoC-Inputs\2020')
+    base = Path(r'..\..\AoC-Inputs\2020')
     if (res := base / f'day{day}.txt').exists():
         return res
 
@@ -10,12 +10,16 @@ def find_day(day: int):
 def read(day: int):
     file = find_day(day)
     with file.open('r') as f:
-        return f.readlines()
+        return f.read()
 
 
-def read_nums(day: int):
-    yield from read_factory(day, int)
+def read_lines(day: int):
+    return read(day).splitlines()
+
+
+def read_ints(day: int):
+    return read_factory(day, int)
 
 
 def read_factory(day: int, factory_func):
-    yield from (factory_func(line) for line in read(day))
+    return [factory_func(line) for line in read(day)]
