@@ -1,7 +1,8 @@
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
+from rich import print
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
@@ -61,29 +62,32 @@ class BingoBoard:
 class BingoGame:
     seq: List[int]
     boards: List[BingoBoard]
+    winners: List[BingoBoard] = field(default_factory=list, init=False)
 
     @classmethod
     def from_str(cls, input_str):
         input_str = input_str.split('\n\n')
         return cls(
             list(map(int, input_str[0].split(','))),
-            list(map(BingoBoard.from_str, input_str[1:]))
+            list(map(BingoBoard.from_str, input_str[1:])),
         )
 
     def call_number(self, number):
+        print(f'Calling {number}')
         for b in self.boards:
             b.register_value(number)
-        for i, b in enumerate(self.boards):
-            if b.check_winning():
-                # print(b)
-                return self.boards.pop(i)
+        winners = [(i, b) for i, b in enumerate(self.boards) if b.check_winning()]
+        if len(winners) > 0:
+            winning_idx, winning_boards = zip(*winners)
+            self.winners.extend([self.boards.pop(i) for i in sorted(winning_idx, reverse=True)])
+            return winning_boards
 
     def play_game(self):
         for num in self.seq:
-            res = self.call_number(num)
-            # print(self)
-            if isinstance(res, BingoBoard):
-                yield num, res
+            if (boards := self.call_number(num)) is not None:
+                for b in boards:
+                    print(b)
+                    yield num, b
 
     def __rich__(self):
         return Columns([b.__rich__() for b in self.boards])

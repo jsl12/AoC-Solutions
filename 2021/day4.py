@@ -17,3 +17,10 @@ def part2(inp):
     print(f'{len(winners)} winning boards')
     last_num, last_winner = winners[-1]
     print(last_num * last_winner.total())
+
+
+if __name__ == '__main__':
+    from aoc_input import read
+
+    print(part1(read(4)))
+    print(part2(read(4)))
