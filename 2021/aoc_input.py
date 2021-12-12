@@ -22,4 +22,4 @@ def read_ints(day: int):
 
 
 def read_factory(day: int, factory_func):
-    return [factory_func(line) for line in read(day)]
+    return [factory_func(line) for line in read_lines(day)]
