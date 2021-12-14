@@ -73,7 +73,7 @@ class BingoGame:
         )
 
     def call_number(self, number):
-        print(f'Calling {number}')
+        # print(f'Calling {number}')
         for b in self.boards:
             b.register_value(number)
         winners = [(i, b) for i, b in enumerate(self.boards) if b.check_winning()]
