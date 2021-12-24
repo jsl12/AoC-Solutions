@@ -1,4 +1,4 @@
 pandas
 matplotlib
 rich
-jupyter lab
+jupyterlab
