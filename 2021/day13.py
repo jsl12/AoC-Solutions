@@ -1,10 +1,9 @@
-from typing import Iterable, Tuple, Callable, List
+from typing import Iterable, Tuple, List
 
 import numpy as np
-import pandas as pd
-from rich.panel import Panel
-
 from rich import print
+
+from helpers import array_to_panel, convert_array
 
 
 def array_from_input(input_str):
@@ -59,19 +58,3 @@ def part2(input_str: str):
     m = {True: '#', False: '.'}
     convert_and_print = lambda a, **kwargs: print(array_to_panel(convert_array(a, lambda v: m[v]), **kwargs))
     convert_and_print(res, title='Day 13 Part 2')
-
-
-def array_to_panel(arr: np.ndarray, delim: str = '', width: int = None, **kwargs):
-    return Panel(
-        '\n'.join(
-            delim.join(str(val).rjust(width) if width is not None else str(val)
-                       for val in row)
-            for row in arr
-        ),
-        expand=False,
-        **kwargs
-    )
-
-
-def convert_array(arr: np.ndarray, func: Callable, *args, **kwargs):
-    return pd.DataFrame(arr).applymap(lambda val: func(val, *args, **kwargs)).values
