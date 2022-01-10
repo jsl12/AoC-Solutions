@@ -10,28 +10,29 @@ from helpers import array_to_panel
 
 @dataclass
 class ArrayPath:
-    pos: Tuple[int, int] = (0, 0)
+    _pos: Tuple[int, int] = field(default=(0, 0))
     path: List[Tuple[int, int]] = field(default_factory=list)
     visited: Set[Tuple[int, int]] = field(default_factory=set)
-    _pos: Tuple[int, int] = field(default=None)
-
-    def __setattr__(self, key, value):
-        super().__setattr__(key, value)
-        if key == 'pos' and hasattr(self, 'path') and hasattr(self, 'visited'):
-            if value not in self.visited:
-                self.path.append(value)
-            else:
-                self.visited.add(value)
 
     def __post_init__(self):
         self.path = [self.pos]
         self.visited.add(self.pos)
 
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, new):
+        self._pos = new
+        self.path.append(new)
+        if new not in self.visited:
+            self.visited.add(new)
+
     def panel(self, arr: np.ndarray) -> Panel:
         res = arr.astype(np.dtype(('U', 20)))
 
-        for coords in self.path:
-            print(coords)
+        for coords in self.visited:
             res[coords] = f'[red bold]{res[coords]}[/]'
 
         for coords in self.forward(arr):
@@ -43,8 +44,11 @@ class ArrayPath:
         yield from adjacent(pos=self.pos, size=arr.shape)
 
     def forward(self, arr: np.ndarray):
-        for coords in self.adjacent(arr):
-            if len(self.path) >= 2:
-                if self.path[-2] == coords:
-                    continue
-            yield coords
+        yield from (
+            coords
+            for coords in self.adjacent(arr)
+            if coords not in self.visited
+        )
+
+    def forward_vals(self, arr: np.ndarray):
+        yield from ((arr[coords], coords) for coords in self.forward(arr))
