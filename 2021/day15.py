@@ -15,8 +15,12 @@ class ArrayPath:
     visited: Set[Tuple[int, int]] = field(default_factory=set)
 
     def __post_init__(self):
-        self.path = [self.pos]
-        self.visited.add(self.pos)
+        if len(self.path) == 0:
+            self.path = [self.pos]
+            self.visited.add(self.pos)
+        else:
+            self.path.append(self.pos)
+            self.visited = set(self.path)
 
     @property
     def pos(self):
@@ -38,7 +42,7 @@ class ArrayPath:
         for coords in self.forward(arr):
             res[coords] = f'[green bold]{res[coords]}[/]'
 
-        return array_to_panel(arr=res, delim=' ', title=f'{self.pos} of {arr.shape}')
+        return array_to_panel(arr=res, delim=' ', title=f'{self.pos} of {self.calc_risk(arr)}')
 
     def adjacent(self, arr: np.ndarray):
         yield from adjacent(pos=self.pos, size=arr.shape)
@@ -52,3 +56,22 @@ class ArrayPath:
 
     def forward_vals(self, arr: np.ndarray):
         yield from ((arr[coords], coords) for coords in self.forward(arr))
+
+    def traverse(self, arr: np.ndarray):
+        for val, new_yx in self.forward_vals(arr):
+            if self.check_termination(arr, pos=new_yx):
+                # print(self.panel(arr))
+                yield self
+            elif len(self.path) > sum(arr.shape):
+                continue
+            else:
+                yield from self.spawn_subpath(pos=new_yx).traverse(arr)
+
+    def check_termination(self, arr: np.ndarray, pos: Tuple[int, int]):
+        return (pos[0] == arr.shape[0] - 1) and (pos[1] == arr.shape[1] - 1)
+
+    def spawn_subpath(self, pos: Tuple[int, int]):
+        return ArrayPath(pos, self.path.copy())
+
+    def calc_risk(self, arr: np.ndarray):
+        return arr[tuple(zip(*self.visited))].flatten().sum()
