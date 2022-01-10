@@ -57,15 +57,19 @@ class ArrayPath:
     def forward_vals(self, arr: np.ndarray):
         yield from ((arr[coords], coords) for coords in self.forward(arr))
 
-    def traverse(self, arr: np.ndarray):
+    def traverse(self, arr: np.ndarray, current_min: int = None):
         pot = sorted(self.forward_vals(arr), key=lambda val: val[0])
         for val, new_yx in pot:
-            if self.check_termination(arr, pos=new_yx):
-                yield self.spawn_subpath(pos=new_yx)
+            new = self.spawn_subpath(pos=new_yx)
+
+            if current_min is not None and new.calc_risk(arr) > current_min:
+                continue
             elif len(self.path) > sum(arr.shape):
                 continue
+            elif self.check_termination(arr, pos=new_yx):
+                yield new
             else:
-                yield from self.spawn_subpath(pos=new_yx).traverse(arr)
+                yield from new.traverse(arr, current_min=current_min)
 
     def check_termination(self, arr: np.ndarray, pos: Tuple[int, int]):
         return (pos[0] == arr.shape[0] - 1) and (pos[1] == arr.shape[1] - 1)
