@@ -58,10 +58,10 @@ class ArrayPath:
         yield from ((arr[coords], coords) for coords in self.forward(arr))
 
     def traverse(self, arr: np.ndarray):
-        for val, new_yx in self.forward_vals(arr):
+        pot = sorted(self.forward_vals(arr), key=lambda val: val[0])
+        for val, new_yx in pot:
             if self.check_termination(arr, pos=new_yx):
-                # print(self.panel(arr))
-                yield self
+                yield self.spawn_subpath(pos=new_yx)
             elif len(self.path) > sum(arr.shape):
                 continue
             else:
