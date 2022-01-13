@@ -1,5 +1,7 @@
 import itertools
 
+from dataclasses import dataclass, field
+
 
 def to_bits(input_str: str):
     chars = {f'{i:x}'.upper(): f'{i:04b}' for i in range(16)}
@@ -26,3 +28,24 @@ def value_from_bits(bits):
 
     groups = list(gen())
     return int(''.join(groups), 2), len(groups)
+
+
+@dataclass
+class Packet:
+    bits: str
+    version: int = field(init=False)
+    type: int = field(init=False)
+
+    def __post_init__(self):
+        self.version = int(self.bits[:3], 2)
+        self.type = int(self.bits[3:6], 2)
+
+
+@dataclass
+class ValuePacket(Packet):
+    value: int = field(init=False)
+
+    def __post_init__(self):
+        super().__post_init__()
+        assert self.type == 4
+        self.value, ngroups = value_from_bits(self.bits[6:])
