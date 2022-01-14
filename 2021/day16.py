@@ -86,8 +86,12 @@ class Packet:
             else:
                 yield base_packet
                 print(f'Payload: {base_packet.length()}bits, {base_packet.payload}')
-                # payload = Packet.from_bits(payload)
-                # print(f'Payload: {payload}')
+                remaining_payload = base_packet.payload[:]
+
+                while len(remaining_payload) > 0:
+                    sub_packet = Packet.from_bits(remaining_payload)[0]
+                    yield sub_packet
+                    remaining_payload = remaining_payload[sub_packet.len:]
 
         return list(gen())
 
@@ -97,6 +101,8 @@ class ValuePacket(Packet):
     value: int = field(init=False)
 
     def __post_init__(self):
+        self.value, ngroups = value_from_bits(self.bits[6:])
+        self.len = 6 + (5 * ngroups)
+        self.bits = self.bits[:self.len]
         super().__post_init__()
         assert self.type == 4
-        self.value, ngroups = value_from_bits(self.bits[6:])
