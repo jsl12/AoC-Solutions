@@ -60,6 +60,17 @@ class Packet:
         }
         return starts[self.length_type()]
 
+    @property
+    def payload_slice(self):
+        return slice(
+            self.payload_start(),
+            self.payload_start() + self.length(),
+        )
+
+    @property
+    def payload(self):
+        return self.bits[self.payload_slice]
+
     @staticmethod
     def from_hex(input_str):
         bits = to_bits(input_str)
@@ -74,12 +85,7 @@ class Packet:
                 yield ValuePacket(bits)
             else:
                 yield base_packet
-                payload_slice = slice(
-                    base_packet.payload_start(),
-                    base_packet.payload_start() + base_packet.length(),
-                )
-                payload = base_packet.bits[payload_slice]
-                print(f'Payload: {base_packet.length()}bits, {payload}')
+                print(f'Payload: {base_packet.length()}bits, {base_packet.payload}')
                 # payload = Packet.from_bits(payload)
                 # print(f'Payload: {payload}')
 
