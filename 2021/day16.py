@@ -33,12 +33,57 @@ def value_from_bits(bits):
 @dataclass
 class Packet:
     bits: str
+    nbits: int = field(init=False)
     version: int = field(init=False)
     type: int = field(init=False)
 
     def __post_init__(self):
+        self.nbits = len(self.bits)
         self.version = int(self.bits[:3], 2)
         self.type = int(self.bits[3:6], 2)
+
+    def length_type(self):
+        return int(self.bits[6])
+
+    def length(self):
+        if self.length_type() == 0:
+            return int(self.bits[7:7 + 15], 2)
+        elif self.length_type() == 1:
+            return int(self.bits[7:7 + 11], 2)
+        else:
+            raise ValueError(f'Invalid length type: {self.length_type()}')
+
+    def payload_start(self):
+        starts = {
+            0: 7 + 15,
+            1: 7 + 11
+        }
+        return starts[self.length_type()]
+
+    @staticmethod
+    def from_hex(input_str):
+        bits = to_bits(input_str)
+        return Packet.from_bits(bits)
+
+    @staticmethod
+    def from_bits(bits):
+        def gen():
+            base_packet = Packet(bits)
+
+            if base_packet.type == 4:
+                yield ValuePacket(bits)
+            else:
+                yield base_packet
+                payload_slice = slice(
+                    base_packet.payload_start(),
+                    base_packet.payload_start() + base_packet.length(),
+                )
+                payload = base_packet.bits[payload_slice]
+                print(f'Payload: {base_packet.length()}bits, {payload}')
+                # payload = Packet.from_bits(payload)
+                # print(f'Payload: {payload}')
+
+        return list(gen())
 
 
 @dataclass
