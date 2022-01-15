@@ -85,13 +85,19 @@ class Packet:
                 yield ValuePacket(bits)
             else:
                 yield base_packet
-                print(f'Payload: {base_packet.length()}bits, {base_packet.payload}')
-                remaining_payload = base_packet.payload[:]
-
-                while len(remaining_payload) > 0:
-                    sub_packet = Packet.from_bits(remaining_payload)[0]
-                    yield sub_packet
-                    remaining_payload = remaining_payload[sub_packet.len:]
+                if base_packet.length_type() == 0:
+                    print(f'Payload: {base_packet.length()}bits, {base_packet.payload}')
+                    remaining_payload = base_packet.payload[:]
+                    while len(remaining_payload) > 0:
+                        sub_packet = Packet.from_bits(remaining_payload)[0]
+                        yield sub_packet
+                        remaining_payload = remaining_payload[sub_packet.len:]
+                elif base_packet.length_type() == 1:
+                    remaining_payload = base_packet.bits[base_packet.payload_start():]
+                    for i in range(base_packet.length()):
+                        sub_packet = Packet.from_bits(remaining_payload)[0]
+                        yield sub_packet
+                        remaining_payload = remaining_payload[sub_packet.len:]
 
         return list(gen())
 
