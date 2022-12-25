@@ -2,6 +2,7 @@ from pathlib import Path
 
 from aoc_input import find_day
 
+
 def elf_gen(lines):
     elf_total = 0
     for line in lines:
@@ -16,4 +17,7 @@ if __name__ == '__main__':
     path = this_file.parents[2] / f'inputs/2022/{this_file.stem}.txt'
     lines = path.read_text().splitlines()
 
-    print(max(elf_gen(lines)))
+    elves = sorted(elf_gen(lines))
+
+    print(max(elves))
+    print(sum(elves[-3:]))
