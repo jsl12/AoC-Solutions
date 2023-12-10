@@ -1,6 +1,8 @@
+import operator
 import re
 import sys
 from dataclasses import asdict, dataclass, fields
+from functools import reduce
 from pathlib import Path
 from typing import List
 
@@ -31,6 +33,9 @@ class Revealed:
             for color, amount in asdict(self).items()
         )
     
+    def power(self):
+        return reduce(operator.mul, (getattr(self, field.name) for field in fields(self)))
+    
 
 @dataclass
 class Game:
@@ -52,6 +57,13 @@ class Game:
     def compare(self, game_set: Revealed) -> bool:
         """True if impossible"""
         return any(rev.compare(game_set) for rev in self.rev)
+    
+    def max_each_color(self) -> Revealed:
+        maxs = {
+            field.name: max(getattr(rev, field.name) for rev in self.rev)
+            for field in fields(Revealed)
+        }
+        return Revealed(**maxs)
 
 
 def filter_max(games: List[Game], game_set: Revealed) -> List[Revealed]:
@@ -71,6 +83,19 @@ def part1(input: str):
     ]
     return sum(game.id for game in filter_max(games, Revealed(red=12, green=13, blue=14)))
 
+
+def part2(input: str):
+    games = [
+        Game.from_line(line)
+        for line in input.splitlines()
+    ]
+
+    powers = {
+        game.id: game.max_each_color().power()
+        for game in games
+    }
+
+    return sum(powers.values())
 
 if __name__ == '__main__':
     res = part1(aoc_input.read(2023, 2))
