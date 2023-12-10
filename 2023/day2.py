@@ -98,5 +98,5 @@ def part2(input: str):
     return sum(powers.values())
 
 if __name__ == '__main__':
-    res = part1(aoc_input.read(2023, 2))
-    print(res)
+    print(part1(aoc_input.read(2023, 2)))
+    print(part2(aoc_input.read(2023, 2)))
