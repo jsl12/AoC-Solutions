@@ -1,8 +1,9 @@
 import re
 import sys
+from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Set
+from typing import Any, Dict, List, Set
 
 from rich import print
 
@@ -26,6 +27,13 @@ class Card:
     have: Set[int]
 
     @classmethod
+    def from_text(cls, text: str) -> Dict[int, Any]:
+        return {
+            card.id: card
+            for card in map(cls.from_line, text.splitlines())
+        }
+
+    @classmethod
     def from_line(cls, line: str):
         m = card_regex.match(line)
         self = cls(
@@ -37,7 +45,17 @@ class Card:
     
     def __post_init__(self):
         self.winning_nums = set(num for num in self.have if num in self.winning)
-        self.value = 0 if len(self.winning_nums) == 0 else 2**(len(self.winning_nums) - 1)
+        self.winning_count = len(self.winning_nums)
+        self.winning_ids = range(self.id + 1, self.id + self.winning_count + 1)
+        self.value = 0 if self.winning_count == 0 else 2**(self.winning_count - 1)
+
+    def play(self, cards: Dict):
+        if self.value > 0:
+            for i in self.winning_ids:
+                card = cards[i]
+                print(f'Yielding from {card}')
+                yield from card.play(cards)
+
 
 def part1(input: str):
     return sum(
@@ -46,6 +64,18 @@ def part1(input: str):
         map(Card.from_line, input.splitlines())
     )
 
+def part2(input):
+    cards = Card.from_text(input)
+    deck = deepcopy(list(cards.values()))
+    played = 0
+    while len(deck) > 0:
+        card = deck.pop(0)
+        played += 1
+        for i in sorted(card.winning_ids):
+            deck.insert(0, cards[i])
+    return played
+
 
 if __name__ == '__main__':
     print(part1(aoc_input.read(2023, 4)))
+    print(part2(aoc_input.read(2023, 4)))
