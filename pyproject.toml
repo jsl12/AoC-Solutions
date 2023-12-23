@@ -1,0 +1,9 @@
+[project]
+name = "aoc_input"
+version = "0.1.0"
+description = "A module for Advent of Code input handling"
+authors = [{name = "Your Name"}]
+license = {file = "LICENSE"}
+
+[tool.setuptools.packages.find]
+include = ["aoc_input"]
