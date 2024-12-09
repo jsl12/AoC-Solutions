@@ -2,8 +2,25 @@
 name = "aoc_input"
 version = "0.1.0"
 description = "A module for Advent of Code input handling"
-authors = [{name = "Your Name"}]
-license = {file = "LICENSE"}
+authors = [{name = "John Lancaster"}]
+requires-python = "~=3.12"
+dependencies = [
+    "rich>=13.9.4",
+]
 
-[tool.setuptools.packages.find]
-include = ["aoc_input"]
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.5",
+    "ruff>=0.8.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aoc_input"]

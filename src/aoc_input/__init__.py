@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Callable
 
 INPUT_DIR = Path(__file__).parents[1] / 'AoC-Inputs'
 
@@ -23,5 +24,5 @@ def read_ints(year: int, day: int):
     return read_factory(year, day, int)
 
 
-def read_factory(year: int, day: int, factory_func):
-    return [factory_func(line) for line in read_lines(year, day)]
+def read_factory(year: int, day: int, factory_func: Callable):
+    yield from (factory_func(line) for line in read_lines(year, day))
